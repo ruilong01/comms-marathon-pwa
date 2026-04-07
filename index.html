@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Communications - Endless Marathon</title>
+    <!-- PWA & iOS Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f111a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Local Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dynamic-background">
+        <div class="glow-orb red"></div>
+        <div class="glow-orb blue"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="glass-header">
+            <h1 class="title">Comms Marathon</h1>
+            <div class="stats">
+                <div class="stat-pill">Score: <span id="score">0</span></div>
+                <div class="stat-pill">Streak: <span id="streak">0</span></div>
+                <div class="stat-pill streak-hot" id="marathon-count">Question: 1</div>
+                <a href="knowledge.html" class="stat-pill kb-link" id="knowledge-btn">📚 Knowledge</a>
+            </div>
+        </header>
+
+        <!-- Main Question Area -->
+        <main class="question-container glass-card" id="quiz-card">
+            <div class="question-type-badge" id="q-type">Multiple Choice</div>
+            <h2 class="question-prompt" id="q-prompt">Loading question...</h2>
+            
+            <!-- Dynamic Content Mount Point -->
+            <div id="q-mount" class="mount-point">
+                <!-- Rendered dynamically by JS -->
+            </div>
+            
+            <button id="submit-btn" class="action-btn" style="display:none;">Submit Answer</button>
+        </main>
+
+        <!-- Feedback Overlay -->
+        <div class="feedback-overlay hidden" id="feedback-modal">
+            <div class="feedback-card">
+                <h2 id="feedback-title">Incorrect</h2>
+                <div class="explanation-box" id="feedback-explanation">
+                    Detailed explanation goes here.
+                </div>
+                <button id="next-btn" class="action-btn">Got it! Next Question</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>

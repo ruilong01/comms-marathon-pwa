@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base – Computer Communications</title>
+    <meta name="description" content="Compressed study guide for Computer Communications covering MAC protocols, CSMA, ALOHA, VLANs, switching and wireless networking.">
+    <!-- PWA & iOS Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f111a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="knowledge.css">
+</head>
+<body>
+    <div class="dynamic-background">
+        <div class="glow-orb red"></div>
+        <div class="glow-orb blue"></div>
+        <div class="glow-orb purple"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="kb-nav">
+        <a href="index.html" class="nav-back">← Quiz</a>
+        <span class="nav-title">📚 Knowledge Base</span>
+        <div class="nav-pills">
+            <a href="#mac" class="nav-pill">MAC</a>
+            <a href="#aloha" class="nav-pill">ALOHA</a>
+            <a href="#csma" class="nav-pill">CSMA</a>
+            <a href="#wlan" class="nav-pill">WLAN</a>
+            <a href="#vlan" class="nav-pill">VLAN</a>
+            <a href="#switch" class="nav-pill">Switch</a>
+        </div>
+    </nav>
+
+    <div class="kb-container">
+
+        <!-- HERO -->
+        <header class="kb-hero glass-card">
+            <div class="hero-text">
+                <p class="hero-tag">📡 Computer Communications · Weeks 7–11</p>
+                <h1>Everything You Need to Know</h1>
+                <p class="hero-sub">Compressed, high-yield knowledge for the marathon. Read this, then crush the quiz.</p>
+            </div>
+            <div class="hero-svg-wrap">
+                <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg" class="hero-svg">
+                    <!-- Network Nodes -->
+                    <circle cx="30" cy="80" r="18" fill="#ff4b4b22" stroke="#ff4b4b" stroke-width="2"/>
+                    <text x="30" y="84" text-anchor="middle" fill="#ff4b4b" font-size="10" font-family="Outfit">A</text>
+                    <circle cx="110" cy="30" r="18" fill="#4b7bff22" stroke="#4b7bff" stroke-width="2"/>
+                    <text x="110" y="34" text-anchor="middle" fill="#4b7bff" font-size="10" font-family="Outfit">SW</text>
+                    <circle cx="190" cy="80" r="18" fill="#00e67622" stroke="#00e676" stroke-width="2"/>
+                    <text x="190" y="84" text-anchor="middle" fill="#00e676" font-size="10" font-family="Outfit">B</text>
+                    <circle cx="110" cy="130" r="18" fill="#a855f722" stroke="#a855f7" stroke-width="2"/>
+                    <text x="110" y="134" text-anchor="middle" fill="#a855f7" font-size="10" font-family="Outfit">C</text>
+                    <!-- Links -->
+                    <line x1="48" y1="72" x2="92" y2="40" stroke="#ffffff22" stroke-width="2" stroke-dasharray="4 3"/>
+                    <line x1="128" y1="40" x2="172" y2="68" stroke="#ffffff22" stroke-width="2" stroke-dasharray="4 3"/>
+                    <line x1="110" y1="48" x2="110" y2="112" stroke="#ffffff22" stroke-width="2" stroke-dasharray="4 3"/>
+                    <!-- Packet animation dots -->
+                    <circle r="5" fill="#4b7bff" opacity="0.9">
+                        <animateMotion dur="2.5s" repeatCount="indefinite" path="M48,72 L92,40"/>
+                    </circle>
+                    <circle r="5" fill="#00e676" opacity="0.9">
+                        <animateMotion dur="2.5s" repeatCount="indefinite" begin="1.2s" path="M128,40 L172,68"/>
+                    </circle>
+                </svg>
+            </div>
+        </header>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- SECTION 1: MAC PROTOCOLS OVERVIEW              -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="mac" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">🔀</span>
+                <div>
+                    <h2>MAC Protocols – The Big Picture</h2>
+                    <p class="section-sub">Multiple Access Control decides who gets to talk on the shared wire.</p>
+                </div>
+            </div>
+
+            <div class="three-col">
+                <div class="concept-card accent-red">
+                    <div class="concept-icon">📦</div>
+                    <h3>Channel Partitioning</h3>
+                    <p>Divide the channel into fixed slices. <strong>TDMA</strong> gives each node a time slot. <strong>FDMA</strong> gives each a frequency band.</p>
+                    <div class="tag-row"><span class="tag">Zero Collisions</span><span class="tag warn">Wasteful at low load</span></div>
+                </div>
+                <div class="concept-card accent-blue">
+                    <div class="concept-icon">🎲</div>
+                    <h3>Random Access</h3>
+                    <p>Nodes transmit whenever they want. Collisions happen and are detected/avoided. <strong>ALOHA, CSMA/CD, CSMA/CA.</strong></p>
+                    <div class="tag-row"><span class="tag good">Efficient at low load</span><span class="tag warn">Chaos at high load</span></div>
+                </div>
+                <div class="concept-card accent-purple">
+                    <div class="concept-icon">🎟️</div>
+                    <h3>Taking Turns</h3>
+                    <p>Nodes take turns using the channel. <strong>Token Ring</strong> passes a token. <strong>Polling</strong> has a master invite each node.</p>
+                    <div class="tag-row"><span class="tag good">Fair &amp; orderly</span><span class="tag">Overhead cost</span></div>
+                </div>
+            </div>
+
+            <!-- Diagram: Hub vs Switch vs Router -->
+            <div class="diagram-card glass-card">
+                <h3 class="diagram-title">🖥️ Hub vs Switch vs Router – Domain Breakdown</h3>
+                <div class="device-compare">
+                    <div class="device-block">
+                        <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="35" y="40" width="50" height="25" rx="5" fill="#ff4b4b33" stroke="#ff4b4b" stroke-width="1.5"/>
+                            <text x="60" y="57" text-anchor="middle" fill="#ff4b4b" font-size="9" font-family="Outfit" font-weight="700">HUB</text>
+                            <line x1="20" y1="52" x2="35" y2="52" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="85" y1="52" x2="100" y2="52" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="60" y1="40" x2="60" y2="20" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="60" y1="65" x2="60" y2="85" stroke="#ffffff44" stroke-width="1.5"/>
+                            <circle cx="15" cy="52" r="6" fill="#ff4b4b44" stroke="#ff4b4b" stroke-width="1"/>
+                            <circle cx="105" cy="52" r="6" fill="#ff4b4b44" stroke="#ff4b4b" stroke-width="1"/>
+                            <circle cx="60" cy="14" r="6" fill="#ff4b4b44" stroke="#ff4b4b" stroke-width="1"/>
+                            <circle cx="60" cy="91" r="6" fill="#ff4b4b44" stroke="#ff4b4b" stroke-width="1"/>
+                            <!-- Big red collision domain box -->
+                            <rect x="2" y="2" width="116" height="96" rx="8" fill="none" stroke="#ff4b4b" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.6"/>
+                        </svg>
+                        <p class="device-name">Layer 1 Hub</p>
+                        <p class="device-fact">1 Big Collision Domain<br>1 Big Broadcast Domain</p>
+                    </div>
+                    <div class="device-block">
+                        <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="35" y="40" width="50" height="25" rx="5" fill="#4b7bff33" stroke="#4b7bff" stroke-width="1.5"/>
+                            <text x="60" y="57" text-anchor="middle" fill="#4b7bff" font-size="8" font-family="Outfit" font-weight="700">SWITCH</text>
+                            <line x1="20" y1="52" x2="35" y2="52" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="85" y1="52" x2="100" y2="52" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="60" y1="40" x2="60" y2="20" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="60" y1="65" x2="60" y2="85" stroke="#ffffff44" stroke-width="1.5"/>
+                            <!-- Individual collision domain boxes per port -->
+                            <rect x="2" y="43" width="18" height="18" rx="3" fill="none" stroke="#ff4b4b" stroke-width="1" stroke-dasharray="3 2"/>
+                            <rect x="100" y="43" width="18" height="18" rx="3" fill="none" stroke="#ff4b4b" stroke-width="1" stroke-dasharray="3 2"/>
+                            <rect x="51" y="2" width="18" height="18" rx="3" fill="none" stroke="#ff4b4b" stroke-width="1" stroke-dasharray="3 2"/>
+                            <rect x="51" y="80" width="18" height="18" rx="3" fill="none" stroke="#ff4b4b" stroke-width="1" stroke-dasharray="3 2"/>
+                            <circle cx="11" cy="52" r="5" fill="#ffffff22" stroke="#ffffff55" stroke-width="1"/>
+                            <circle cx="109" cy="52" r="5" fill="#ffffff22" stroke="#ffffff55" stroke-width="1"/>
+                            <circle cx="60" cy="11" r="5" fill="#ffffff22" stroke="#ffffff55" stroke-width="1"/>
+                            <circle cx="60" cy="89" r="5" fill="#ffffff22" stroke="#ffffff55" stroke-width="1"/>
+                            <!-- One big broadcast domain -->
+                            <rect x="2" y="2" width="116" height="96" rx="8" fill="none" stroke="#4b7bff" stroke-width="1.5" stroke-dasharray="5 3" opacity="0.5"/>
+                        </svg>
+                        <p class="device-name">Layer 2 Switch</p>
+                        <p class="device-fact">Each port = own Collision Domain<br>1 Big Broadcast Domain</p>
+                    </div>
+                    <div class="device-block">
+                        <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="35" y="40" width="50" height="25" rx="5" fill="#00e67633" stroke="#00e676" stroke-width="1.5"/>
+                            <text x="60" y="57" text-anchor="middle" fill="#00e676" font-size="8" font-family="Outfit" font-weight="700">ROUTER</text>
+                            <line x1="20" y1="52" x2="35" y2="52" stroke="#ffffff44" stroke-width="1.5"/>
+                            <line x1="85" y1="52" x2="100" y2="52" stroke="#ffffff44" stroke-width="1.5"/>
+                            <!-- Separate broadcast domains on each side -->
+                            <rect x="2" y="30" width="25" height="40" rx="5" fill="none" stroke="#4b7bff" stroke-width="1" stroke-dasharray="4 2"/>
+                            <rect x="93" y="30" width="25" height="40" rx="5" fill="none" stroke="#4b7bff" stroke-width="1" stroke-dasharray="4 2"/>
+                            <circle cx="14" cy="52" r="5" fill="#ffffff22" stroke="#ffffff55" stroke-width="1"/>
+                            <circle cx="106" cy="52" r="5" fill="#ffffff22" stroke="#ffffff55" stroke-width="1"/>
+                            <text x="14" y="25" text-anchor="middle" fill="#4b7bff88" font-size="7" font-family="Outfit">BD1</text>
+                            <text x="106" y="25" text-anchor="middle" fill="#4b7bff88" font-size="7" font-family="Outfit">BD2</text>
+                        </svg>
+                        <p class="device-name">Layer 3 Router</p>
+                        <p class="device-fact">Breaks Broadcast Domains<br>Each port = own subnet</p>
+                    </div>
+                </div>
+                <div class="legend-row">
+                    <span class="legend-dot red"></span><span>Red dashed = Collision Domain</span>
+                    <span class="legend-dot blue"></span><span>Blue dashed = Broadcast Domain</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 2: ALOHA                        -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="aloha" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">📡</span>
+                <div>
+                    <h2>ALOHA Protocols</h2>
+                    <p class="section-sub">The original random-access schemes — simple but inefficient.</p>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="concept-card accent-red">
+                    <h3>Pure (Unslotted) ALOHA</h3>
+                    <ul class="kb-list">
+                        <li>Transmit <strong>any time</strong> — no synchronisation needed.</li>
+                        <li>A frame is <strong>vulnerable for 2×frame-time</strong> (your frame + anyone who started just before/after).</li>
+                        <li>Max efficiency = <strong>1/(2e) ≈ 18%</strong></li>
+                    </ul>
+                </div>
+                <div class="concept-card accent-blue">
+                    <h3>Slotted ALOHA</h3>
+                    <ul class="kb-list">
+                        <li>Only transmit at the <strong>start of a time slot</strong>.</li>
+                        <li>Vulnerable window is halved — only <strong>1×frame-time</strong>.</li>
+                        <li>Max efficiency = <strong>1/e ≈ 37%</strong> — twice as good.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ALOHA Timeline Diagram -->
+            <div class="diagram-card glass-card">
+                <h3 class="diagram-title">📊 ALOHA Efficiency Comparison</h3>
+                <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" class="full-svg">
+                    <!-- Axes -->
+                    <line x1="50" y1="20" x2="50" y2="150" stroke="#ffffff44" stroke-width="1.5"/>
+                    <line x1="50" y1="150" x2="530" y2="150" stroke="#ffffff44" stroke-width="1.5"/>
+                    <text x="25" y="25" fill="#a0a5ba" font-size="10" font-family="Outfit">Eff%</text>
+                    <text x="290" y="170" text-anchor="middle" fill="#a0a5ba" font-size="10" font-family="Outfit">Load (G)</text>
+                    <!-- Y labels -->
+                    <text x="40" y="154" text-anchor="end" fill="#a0a5ba" font-size="9" font-family="Outfit">0</text>
+                    <text x="40" y="110" text-anchor="end" fill="#a0a5ba" font-size="9" font-family="Outfit">18%</text>
+                    <text x="40" y="72" text-anchor="end" fill="#a0a5ba" font-size="9" font-family="Outfit">37%</text>
+                    <!-- Grid -->
+                    <line x1="50" y1="110" x2="530" y2="110" stroke="#ffffff11" stroke-width="1" stroke-dasharray="3 4"/>
+                    <line x1="50" y1="72" x2="530" y2="72" stroke="#ffffff11" stroke-width="1" stroke-dasharray="3 4"/>
+                    <!-- Pure ALOHA curve points (approx G*e^-2G scaled) -->
+                    <polyline points="50,150 100,122 160,110 220,116 290,126 380,138 470,146 530,149"
+                        fill="none" stroke="#ff4b4b" stroke-width="2.5"/>
+                    <!-- Slotted ALOHA curve (G*e^-G scaled) -->
+                    <polyline points="50,150 100,105 160,72 250,76 330,90 420,110 510,130 530,134"
+                        fill="none" stroke="#4b7bff" stroke-width="2.5"/>
+                    <!-- Peak markers -->
+                    <circle cx="160" cy="110" r="5" fill="#ff4b4b"/>
+                    <text x="165" y="106" fill="#ff4b4b" font-size="9" font-family="Outfit" font-weight="700">Pure 18%</text>
+                    <circle cx="160" cy="72" r="5" fill="#4b7bff"/>
+                    <text x="165" y="68" fill="#4b7bff" font-size="9" font-family="Outfit" font-weight="700">Slotted 37%</text>
+                </svg>
+                <div class="formula-row">
+                    <div class="formula-box red">Pure ALOHA: S = G · e<sup>−2G</sup> &nbsp;→&nbsp; max at G=0.5 → <strong>18%</strong></div>
+                    <div class="formula-box blue">Slotted ALOHA: S = G · e<sup>−G</sup> &nbsp;→&nbsp; max at G=1 → <strong>37%</strong></div>
+                </div>
+            </div>
+
+            <!-- Slotted ALOHA Success Probability -->
+            <div class="info-card accent-blue">
+                <h3>🎯 First-Success in Slot N — Formula</h3>
+                <p>P(A succeeds first time in slot k) = (P<sub>fail</sub>)<sup>k-1</sup> × P<sub>success</sub></p>
+                <p style="margin-top:0.5rem">Where <strong>P<sub>success for A</sub> = p<sub>A</sub> × (1 − p<sub>B</sub>)</strong> — A transmits AND B stays silent.</p>
+                <div class="example-box">
+                    <strong>Example:</strong> p<sub>A</sub>=0.4, p<sub>B</sub>=0.3, first success in slot 3:<br>
+                    P<sub>success</sub> = 0.4 × 0.7 = 0.28 &nbsp;|&nbsp; P<sub>fail</sub> = 0.72<br>
+                    Answer = 0.72² × 0.28 = <strong>0.1452</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 3: CSMA / CD                   -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="csma" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">⚡</span>
+                <div>
+                    <h2>CSMA/CD — Ethernet (Wired)</h2>
+                    <p class="section-sub">Carrier Sense Multiple Access with Collision Detection</p>
+                </div>
+            </div>
+
+            <div class="steps-card glass-card">
+                <h3 class="diagram-title">🔁 CSMA/CD Protocol Flowchart</h3>
+                <div class="steps-flow">
+                    <div class="step-box blue">1. Sense carrier (CS)<br><small>Is the wire idle?</small></div>
+                    <div class="step-arrow">↓ Idle</div>
+                    <div class="step-box blue">2. Begin transmitting</div>
+                    <div class="step-arrow">↓</div>
+                    <div class="step-box red">3. Collision Detected (CD)?</div>
+                    <div class="steps-branch">
+                        <div class="branch-col">
+                            <div class="step-arrow">No ↓</div>
+                            <div class="step-box green">✅ Done!</div>
+                        </div>
+                        <div class="branch-col">
+                            <div class="step-arrow">Yes ↓</div>
+                            <div class="step-box red">4. Send JAM signal<br><small>Alert everyone</small></div>
+                            <div class="step-arrow">↓</div>
+                            <div class="step-box red">5. Binary Exponential Backoff<br><small>Wait random K×slotTime</small></div>
+                            <div class="step-arrow">↓ After 16 fails: Drop frame</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="info-card accent-red">
+                    <h3>⏱️ Slot Time (Min Frame Size)</h3>
+                    <p>The wire must stay busy long enough to detect a collision at the farthest end.</p>
+                    <div class="formula-box red" style="margin-top:1rem">
+                        Slot Time = 2 × d<sub>prop</sub><br>
+                        d<sub>prop</sub> = Distance ÷ Speed<br>
+                        With repeater: add (bits ÷ bps)
+                    </div>
+                    <div class="example-box">
+                        <strong>Example:</strong> 500m wire, speed = 2×10⁸ m/s<br>
+                        d = 500 / 2×10⁸ = 2.5 µs<br>
+                        Slot Time = 2 × 2.5 = <strong>5 µs</strong>
+                    </div>
+                </div>
+                <div class="info-card accent-blue">
+                    <h3>🎲 Binary Exponential Backoff</h3>
+                    <p>After m-th collision, choose random K from {0 … 2<sup>min(m,10)</sup>−1}</p>
+                    <div class="backoff-table">
+                        <div class="bt-row header"><span>Collision #</span><span>Range</span></div>
+                        <div class="bt-row"><span>1st</span><span>K ∈ {0, 1}</span></div>
+                        <div class="bt-row"><span>2nd</span><span>K ∈ {0–3}</span></div>
+                        <div class="bt-row"><span>3rd</span><span>K ∈ {0–7}</span></div>
+                        <div class="bt-row"><span>10th+</span><span>K ∈ {0–1023}</span></div>
+                        <div class="bt-row red-row"><span>16th</span><span>❌ DROP frame</span></div>
+                    </div>
+                    <p style="margin-top:0.8rem;font-size:0.85rem">Collision probability for A (m<sub>A</sub>) and B (m<sub>B</sub>): <br>
+                    P = 1/(2<sup>m<sub>B</sub></sup>)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 4: WLAN / CSMA/CA              -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="wlan" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">📶</span>
+                <div>
+                    <h2>WLAN — CSMA/CA &amp; 802.11</h2>
+                    <p class="section-sub">Wireless can't detect collisions — so it avoids them instead.</p>
+                </div>
+            </div>
+
+            <!-- Why no CD in WLAN -->
+            <div class="highlight-card">
+                <div class="highlight-icon">🔇</div>
+                <div>
+                    <h3>Why WLAN Cannot Use CD</h3>
+                    <p>A transmitting antenna blasts out such a powerful signal locally that it completely drowns out any incoming weaker signal. It is physically impossible to "listen while shouting". Therefore, <strong>collision avoidance (CSMA/CA)</strong> is used instead.</p>
+                </div>
+            </div>
+
+            <!-- Hidden terminal -->
+            <div class="diagram-card glass-card">
+                <h3 class="diagram-title">👻 The Hidden Terminal Problem</h3>
+                <div class="hidden-terminal-layout">
+                    <svg viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg" class="ht-svg">
+                        <!-- Node A -->
+                        <circle cx="40" cy="70" r="20" fill="#ff4b4b22" stroke="#ff4b4b" stroke-width="2"/>
+                        <text x="40" y="74" text-anchor="middle" fill="#ff4b4b" font-size="11" font-family="Outfit" font-weight="700">A</text>
+                        <!-- A range circle -->
+                        <circle cx="40" cy="70" r="90" fill="none" stroke="#ff4b4b" stroke-width="1" stroke-dasharray="5 4" opacity="0.4"/>
+                        <!-- AP -->
+                        <circle cx="170" cy="70" r="22" fill="#4b7bff22" stroke="#4b7bff" stroke-width="2"/>
+                        <text x="170" y="74" text-anchor="middle" fill="#4b7bff" font-size="9" font-family="Outfit" font-weight="700">AP</text>
+                        <!-- Node B -->
+                        <circle cx="300" cy="70" r="20" fill="#00e67622" stroke="#00e676" stroke-width="2"/>
+                        <text x="300" y="74" text-anchor="middle" fill="#00e676" font-size="11" font-family="Outfit" font-weight="700">B</text>
+                        <!-- B range circle -->
+                        <circle cx="300" cy="70" r="90" fill="none" stroke="#00e676" stroke-width="1" stroke-dasharray="5 4" opacity="0.4"/>
+                        <!-- A cannot hear B label -->
+                        <line x1="60" y1="55" x2="280" y2="55" stroke="#ff4b4b" stroke-width="1" stroke-dasharray="4 3" opacity="0.5"/>
+                        <text x="170" y="50" text-anchor="middle" fill="#ff4b4b" font-size="9" font-family="Outfit">A ← cannot hear → B</text>
+                        <!-- RTS arrow A to AP -->
+                        <line x1="62" y1="72" x2="148" y2="72" stroke="#ff4b4b" stroke-width="2" marker-end="url(#arr-red)"/>
+                        <text x="105" y="88" text-anchor="middle" fill="#ff4b4b" font-size="8.5" font-family="Outfit">RTS</text>
+                        <!-- CTS arrow AP to B -->
+                        <line x1="192" y1="66" x2="278" y2="66" stroke="#4b7bff" stroke-width="2" marker-end="url(#arr-blue)"/>
+                        <text x="235" y="58" text-anchor="middle" fill="#4b7bff" font-size="8.5" font-family="Outfit">CTS (all hear!)</text>
+                        <defs>
+                            <marker id="arr-red" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="#ff4b4b"/>
+                            </marker>
+                            <marker id="arr-blue" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                <path d="M0,0 L6,3 L0,6 Z" fill="#4b7bff"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                    <div class="ht-points">
+                        <div class="ht-point"><strong>Problem:</strong> A and B both hear the AP but not each other — they transmit simultaneously and collide at the AP.</div>
+                        <div class="ht-point"><strong>Fix:</strong> RTS/CTS handshake. A sends RTS → AP shouts CTS to everyone → B hears CTS and stays silent.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DCF / BTC Countdown -->
+            <div class="info-card accent-blue">
+                <h3>⏳ DCF Mode — How BTC Counts Down</h3>
+                <ol class="kb-list-ol">
+                    <li>Generate random <strong>BTC</strong> (Back-off Time Counter) value.</li>
+                    <li>Wait for medium to be <strong>idle for DIFS</strong> duration.</li>
+                    <li>Count down BTC by 1 for every idle slot (slot = 20 ms typical).</li>
+                    <li>If medium goes busy → <strong>pause counter</strong>, wait for idle again + DIFS, then resume.</li>
+                    <li>When BTC = 0 → <strong>transmit!</strong></li>
+                </ol>
+                <div class="formula-box blue" style="margin-top:1rem">
+                    Time consumed in a free block = DIFS + (ticks_consumed × slotTime)
+                </div>
+            </div>
+
+            <!-- 802.11 Standards -->
+            <div class="diagram-card glass-card">
+                <h3 class="diagram-title">📋 802.11 Standard Cheat Sheet</h3>
+                <div class="std-table">
+                    <div class="std-row header">
+                        <span>Standard</span><span>Band</span><span>Max Speed</span><span>Compatible With</span>
+                    </div>
+                    <div class="std-row">
+                        <span class="std-name">802.11b</span><span>2.4 GHz</span><span>11 Mbps</span><span>802.11g (same band)</span>
+                    </div>
+                    <div class="std-row">
+                        <span class="std-name">802.11g</span><span>2.4 GHz</span><span>54 Mbps</span><span>802.11b ✅</span>
+                    </div>
+                    <div class="std-row warn-row">
+                        <span class="std-name">802.11a</span><span>5 GHz</span><span>54 Mbps</span><span>802.11b ❌ (different band!)</span>
+                    </div>
+                    <div class="std-row">
+                        <span class="std-name">802.11n</span><span>2.4 / 5 GHz</span><span>600 Mbps</span><span>b, g, a ✅</span>
+                    </div>
+                </div>
+                <p class="diagram-note">⚠️ b→g migration is easy (same 2.4 GHz). b→a migration is hard (different 5 GHz band).</p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 5: VLANs                       -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="vlan" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">🏷️</span>
+                <div>
+                    <h2>VLANs — Virtual LANs</h2>
+                    <p class="section-sub">Logically slice one physical switch into multiple isolated broadcast domains.</p>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="info-card accent-purple">
+                    <h3>What VLANs Do</h3>
+                    <ul class="kb-list">
+                        <li>Split one physical switch into <strong>multiple logical broadcast domains</strong>.</li>
+                        <li>Ports are assigned to a VLAN — traffic stays inside that VLAN.</li>
+                        <li>To communicate between VLANs, you <strong>still need a Router</strong> (or L3 switch).</li>
+                        <li>VLANs do <strong>NOT</strong> reduce collision domains (switches already do that per port).</li>
+                    </ul>
+                </div>
+                <div class="info-card accent-blue">
+                    <h3>802.1Q Trunk Tag</h3>
+                    <ul class="kb-list">
+                        <li>When a frame travels between switches on a <strong>trunk link</strong>, a <strong>4-byte tag</strong> is inserted.</li>
+                        <li>Tag sits between the Src MAC and Type/Length field.</li>
+                        <li>Contains: <strong>VLAN ID</strong> (12 bits) + priority bits.</li>
+                        <li>Receiving switch reads tag, strips it, delivers to correct VLAN port.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- VLAN Frame Diagram -->
+            <div class="diagram-card glass-card">
+                <h3 class="diagram-title">🧩 802.1Q Frame Structure (on Trunk)</h3>
+                <div class="frame-diagram">
+                    <div class="frame-field grey">Preamble<br><small>7B</small></div>
+                    <div class="frame-field grey">SFD<br><small>1B</small></div>
+                    <div class="frame-field blue">Dst MAC<br><small>6B</small></div>
+                    <div class="frame-field blue">Src MAC<br><small>6B</small></div>
+                    <div class="frame-field purple glow-field">VLAN Tag<br><small>4B ← inserted!</small></div>
+                    <div class="frame-field blue">Type<br><small>2B</small></div>
+                    <div class="frame-field green">Data<br><small>46–1500B</small></div>
+                    <div class="frame-field grey">FCS<br><small>4B</small></div>
+                </div>
+                <p class="diagram-note">The 4-byte VLAN tag physically increases the frame size from 1518B to 1522B on trunk links.</p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 6: SWITCH / MAC TABLE          -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="switch" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">🗂️</span>
+                <div>
+                    <h2>Switch — MAC Address Table &amp; Aging</h2>
+                    <p class="section-sub">Switches learn which device is on which port by inspecting source MAC addresses.</p>
+                </div>
+            </div>
+
+            <div class="steps-card glass-card">
+                <h3 class="diagram-title">🧠 Switch Self-Learning Logic</h3>
+                <div class="learning-grid">
+                    <div class="learn-step">
+                        <div class="learn-num">1</div>
+                        <div class="learn-text"><strong>Frame arrives</strong> on port X from MAC "AA"</div>
+                    </div>
+                    <div class="learn-step">
+                        <div class="learn-num">2</div>
+                        <div class="learn-text"><strong>Record</strong> AA → Port X in MAC table. Reset TTL to max (e.g. 300s).</div>
+                    </div>
+                    <div class="learn-step">
+                        <div class="learn-num">3</div>
+                        <div class="learn-text"><strong>Look up</strong> destination MAC. If found → forward to that port only. If not → <strong>flood to all ports</strong>.</div>
+                    </div>
+                    <div class="learn-step">
+                        <div class="learn-num">4</div>
+                        <div class="learn-text"><strong>TTL counts down</strong> every second. If entry expires → deleted → flood again next time.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-card red-hl">
+                <div class="highlight-icon">⚠️</div>
+                <div>
+                    <h3>The TTL Trick (Exam Trap!)</h3>
+                    <p>The switch <strong>ONLY resets TTL</strong> when it receives a frame <em>FROM</em> a device (Source MAC). Sending a frame <em>TO</em> a device has absolutely <strong>zero effect</strong> on that device's TTL counter. The timer just keeps counting down.</p>
+                </div>
+            </div>
+
+            <div class="info-card accent-blue">
+                <h3>📍 Broadcast MAC Address</h3>
+                <p>Broadcast frames (destined to <strong>FF-FF-FF-FF-FF-FF</strong>) are forwarded to ALL ports by a switch. This is why switches don't break broadcast domains — only Routers (or VLANs) do.</p>
+                <div class="formula-box blue" style="margin-top:1rem">
+                    All-zeros (00-00-00-00-00-00) = null/unassigned — NOT broadcast!<br>
+                    All-ones (FF-FF-FF-FF-FF-FF) = broadcast ✅
+                </div>
+            </div>
+        </section>
+
+        <!-- QUICK REFERENCE CARD -->
+        <section class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">⚡</span>
+                <div>
+                    <h2>Quick-Fire Cheat Sheet</h2>
+                    <p class="section-sub">Everything on one card for last-minute revision.</p>
+                </div>
+            </div>
+            <div class="cheatsheet glass-card">
+                <div class="cs-grid">
+                    <div class="cs-item"><span class="cs-label">Pure ALOHA max efficiency</span><span class="cs-val">18% (1/2e)</span></div>
+                    <div class="cs-item"><span class="cs-label">Slotted ALOHA max efficiency</span><span class="cs-val">37% (1/e)</span></div>
+                    <div class="cs-item"><span class="cs-label">CSMA/CD max collisions before drop</span><span class="cs-val">16 attempts</span></div>
+                    <div class="cs-item"><span class="cs-label">Slot Time formula</span><span class="cs-val">2 × d_prop</span></div>
+                    <div class="cs-item"><span class="cs-label">Backoff ceiling (k)</span><span class="cs-val">min(m, 10)</span></div>
+                    <div class="cs-item"><span class="cs-label">802.1Q VLAN tag size</span><span class="cs-val">4 bytes</span></div>
+                    <div class="cs-item"><span class="cs-label">Broadcast MAC address</span><span class="cs-val">FF-FF-FF-FF-FF-FF</span></div>
+                    <div class="cs-item"><span class="cs-label">Token Ring collisions</span><span class="cs-val">ZERO (deterministic)</span></div>
+                    <div class="cs-item"><span class="cs-label">HUB domain type</span><span class="cs-val">1 Big CD + 1 Big BD</span></div>
+                    <div class="cs-item"><span class="cs-label">Switch domain type</span><span class="cs-val">Per-port CD, 1 Big BD</span></div>
+                    <div class="cs-item"><span class="cs-label">802.11b band</span><span class="cs-val">2.4 GHz</span></div>
+                    <div class="cs-item"><span class="cs-label">802.11a band</span><span class="cs-val">5 GHz (not compat. with b)</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER NAV -->
+        <footer class="kb-footer">
+            <a href="index.html" class="action-btn footer-btn">🏁 Go Crush the Quiz →</a>
+        </footer>
+
+    </div>
+
+    <script src="knowledge.js"></script>
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>
