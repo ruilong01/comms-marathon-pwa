@@ -1,11 +1,17 @@
-const CACHE_NAME = 'comms-quiz-v1';
+const CACHE_NAME = 'comms-quiz-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  './knowledge.html',
+  './quiz.html',
+  './module_hub.html',
+  './dynamic_knowledge.html',
+  './exam_paper.html',
   './styles.css',
   './knowledge.css',
   './app.js',
+  './dashboard.js',
+  './module_hub.js',
+  './ai_service.js',
   './data.js',
   './knowledge.js',
   './manifest.json',
