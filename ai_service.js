@@ -130,9 +130,9 @@ ${context}
 // 4. CHAT WITH TUTOR
 // ----------------------------------------------------
 async function chatWithTutor(message, apiKey, context) {
-    const prompt = `You are a helpful AI Tutor embedded inside an educational app.
-A student is asking you a question. Keep your answer brief, encouraging, and highly specific to the context. 
-If they ask for an answer to a question, subtly guide them to the answer rather than just bluntly giving it, but if they ask "explain why" then give a full explanation.
+    const prompt = `You are a helpful AI Assistant embedded inside a personal study app.
+A student is asking you a question about the material. Provide a direct, comprehensive, and highly specific answer to their question. 
+Since this is for their own personal study, do not hold back or "guide" them to the answer—just give them the direct explanation or solution they are looking for.
 Use simple HTML (like <strong>, <em>, <br>) so your response is formatted nicely. Do NOT use markdown.
 
 --- CURRENT CONTEXT / WHAT THE STUDENT IS LOOKING AT ---
