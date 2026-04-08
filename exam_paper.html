@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Exam Paper</title>
+    <!-- PWA & iOS Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Unique styling for exam paper reading layout (Light Mode feeling) -->
+    <style>
+        body {
+            background-color: #f4f6f8;
+            color: #1a1b20;
+            font-family: 'Merriweather', serif; /* Serif for official paper feel */
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .paper-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 4rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .nav-header {
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .nav-header a {
+            color: #4b7bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .exam-header {
+            text-align: center;
+            border-bottom: 2px solid #1a1b20;
+            padding-bottom: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .exam-header h1 {
+            font-size: 2rem;
+            margin: 0 0 1rem 0;
+        }
+
+        .exam-instructions {
+            font-style: italic;
+            color: #555;
+            font-size: 0.95rem;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .question-block {
+            margin-bottom: 3rem;
+        }
+
+        .main-prompt {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sub-question {
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .sq-id {
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .user-input {
+            width: 100%;
+            min-height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            background: #fafafa;
+        }
+
+        /* Grading Mode Styles */
+        .grading-panel {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(20, 22, 30, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid #333;
+            z-index: 100;
+        }
+
+        .btn {
+            font-family: 'Outfit', sans-serif;
+            background: #4b7bff;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover { background: #3a60cc; }
+
+        .answer-key {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #e6fced;
+            border-left: 4px solid #00e676;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+        }
+
+        .answer-key.visible {
+            display: block;
+        }
+
+        @media (max-width: 800px) {
+            .paper-container { margin: 0; padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="paper-container">
+        <div class="nav-header">
+            <a href="#" id="back-link">← Hub</a>
+            <span style="color: #888; font-size: 0.9rem;">AI Mock Protocol</span>
+        </div>
+
+        <div class="exam-header">
+            <h1 id="exam-title">Loading Exam...</h1>
+            <div class="exam-instructions" id="exam-inst">Please wait while the AI constructs your paper.</div>
+        </div>
+
+        <div id="paper-mount">
+            <!-- Questions rendered here -->
+        </div>
+
+        <!-- Space for the fixed bottom bar -->
+        <div style="height: 100px;"></div>
+    </div>
+
+    <div class="grading-panel">
+        <button class="btn" id="check-answers-btn">End Exam & Reveal Answer Key</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const moduleName = urlParams.get('module');
+        const examName = urlParams.get('exam');
+        
+        document.getElementById('back-link').href = moduleName ? `module_hub.html?module=${encodeURIComponent(moduleName)}` : 'index.html';
+
+        let currentExam = null;
+
+        function loadExam() {
+            let dict = JSON.parse(localStorage.getItem('dynamic_modules') || '[]');
+            let mod = dict.find(m => m.name === moduleName);
+            if(!mod || !mod.exams) return;
+
+            currentExam = mod.exams.find(e => e.name === examName);
+            if(!currentExam) return;
+
+            document.getElementById('exam-title').innerText = currentExam.title;
+            document.getElementById('exam-inst').innerText = currentExam.instructions || "Attempt all questions in the provided space.";
+            document.title = currentExam.title;
+
+            renderQuestions();
+        }
+
+        function renderQuestions() {
+            const mount = document.getElementById('paper-mount');
+            mount.innerHTML = '';
+
+            currentExam.questions.forEach(q => {
+                const block = document.createElement('div');
+                block.className = 'question-block';
+                
+                block.innerHTML = `<div class="main-prompt">Q${q.number}. ${q.prompt}</div>`;
+
+                if(q.subQuestions) {
+                    q.subQuestions.forEach(sq => {
+                        const sqDiv = document.createElement('div');
+                        sqDiv.className = 'sub-question';
+                        
+                        // Find the matching answer dynamically
+                        const matchingAns = currentExam.answers.find(a => a.id === sq.id) || { answerHtml: "No answer key provided." };
+
+                        sqDiv.innerHTML = `
+                            <span class="sq-id">(${sq.id})</span>
+                            <div class="sq-text">${sq.text}</div>
+                            <textarea class="user-input" placeholder="Write your response here..."></textarea>
+                            <div class="answer-key" id="ans-${sq.id}">
+                                ${matchingAns.answerHtml}
+                            </div>
+                        `;
+                        block.appendChild(sqDiv);
+                    });
+                }
+                
+                mount.appendChild(block);
+            });
+        }
+
+        document.getElementById('check-answers-btn').addEventListener('click', (e) => {
+            const btn = e.target;
+            if(btn.innerText === 'End Exam & Reveal Answer Key') {
+                if(confirm("Are you sure you want to end the exam and reveal all solutions?")) {
+                    document.querySelectorAll('.answer-key').forEach(el => el.classList.add('visible'));
+                    document.querySelectorAll('.user-input').forEach(el => {
+                        el.readOnly = true; 
+                        el.style.backgroundColor = "#eef0f2";
+                        el.style.color = "#555";
+                    });
+                    btn.innerText = "Exam Graded. Return to Hub.";
+                    btn.style.backgroundColor = "#a855f7";
+                }
+            } else {
+                window.location.href = `module_hub.html?module=${encodeURIComponent(moduleName)}`;
+            }
+        });
+
+        window.onload = loadExam;
+    </script>
+</body>
+</html>

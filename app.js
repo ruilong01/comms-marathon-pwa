@@ -19,6 +19,40 @@ let currentStreak = 0;
 let totalAsked = 1;
 let currentQ = null;
 
+// Global overrides if custom module is active
+const urlParams = new URLSearchParams(window.location.search);
+const moduleName = urlParams.get('module');
+
+if (moduleName) {
+    document.title = moduleName + " - Endless Marathon";
+    const titleEl = document.getElementById('quiz-title');
+    if (titleEl) titleEl.innerText = moduleName;
+
+    // Load from local storage
+    const modulesStr = localStorage.getItem('dynamic_modules') || '[]';
+    const modulesArr = JSON.parse(modulesStr);
+    const customMod = modulesArr.find(m => m.name === moduleName);
+
+    if (customMod && customMod.chapters) {
+        // Aggregate all questions from all chapters
+        let aggregatedQuestions = [];
+        customMod.chapters.forEach(chap => {
+            if(chap.questions) aggregatedQuestions.push(...chap.questions);
+        });
+
+        if(aggregatedQuestions.length === 0) {
+            alert("No questions found! Make sure you uploaded a chapter first.");
+        } else {
+            // Override the global getRandomQuestion from data.js
+            window.getRandomQuestion = function() {
+                return aggregatedQuestions[Math.floor(Math.random() * aggregatedQuestions.length)];
+            };
+        }
+    } else {
+        alert("Module not found or empty! Reverting to default dataset.");
+    }
+}
+
 // Initialize
 function init() {
     submitBtn.addEventListener('click', handleSubmission);

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Hub</title>
+    <!-- PWA & iOS Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f111a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        .hub-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hub-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .hub-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Large Action Buttons */
+        .big-action {
+            background: rgba(0, 195, 255, 0.1);
+            border: 1px solid rgba(0, 195, 255, 0.3);
+            color: #00c3ff;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .big-action:hover {
+            background: rgba(0, 195, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 195, 255, 0.2);
+        }
+
+        .big-action.purple {
+            background: rgba(168, 85, 247, 0.1);
+            border-color: rgba(168, 85, 247, 0.3);
+            color: #a855f7;
+        }
+        .big-action.purple:hover {
+            background: rgba(168, 85, 247, 0.2);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2);
+        }
+
+        .section-title {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Chapter/Exam Cards */
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .item-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item-card h4 { margin: 0; color: #fff; font-size: 1.1rem; }
+        .item-card p { margin: 0; color: #a0a5ba; font-size: 0.9rem; }
+
+        /* The Dropzone styling */
+        .dropzone {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(0,0,0,0.2);
+        }
+        .dropzone:hover {
+            border-color: #00c3ff;
+            background: rgba(0, 195, 255, 0.05);
+        }
+        .dropzone input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        /* Modals and Loading */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1; pointer-events: all;
+        }
+        .modal-card {
+            background: rgba(20, 22, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #00c3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .mock-btn {
+            background: rgba(0, 230, 118, 0.1);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            color: #00e676;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .mock-btn:hover { background: rgba(0, 230, 118, 0.2); }
+    </style>
+</head>
+<body>
+    <div class="dynamic-background">
+        <div class="glow-orb blue"></div>
+        <div class="glow-orb purple"></div>
+    </div>
+
+    <div class="hub-container">
+        <!-- Header Nav -->
+        <a href="index.html" style="color: #a0a5ba; text-decoration: none; font-weight: bold; margin-bottom: 20px; display: inline-block;">⬅ Back to Dashboard</a>
+        
+        <div class="hub-header">
+            <h1 class="title" id="module-title" style="margin: 0; font-size: 2.5rem;">Loading...</h1>
+        </div>
+
+        <!-- Major Study Actions -->
+        <div class="hub-actions">
+            <a href="#" class="big-action" id="btn-quiz">
+                <span>🎯</span> Play AI Quiz (All Chapters)
+            </a>
+            <a href="#" class="big-action purple" id="btn-knowledge">
+                <span>📚</span> View Module Master-Plan
+            </a>
+        </div>
+
+        <!-- Chapters Section -->
+        <h2 class="section-title">
+            Chapters 
+        </h2>
+        <div class="grid-list" id="chapters-list">
+            <!-- Dropzone for new chapter -->
+            <div class="dropzone" id="dz-chapter">
+                <input type="file" accept=".pdf,.txt" id="file-chapter" multiple>
+                <div style="font-size: 2rem; margin-bottom: 10px;">📄</div>
+                <strong>Upload File</strong>
+                <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #a0a5ba;">Adds as a new Chapter</p>
+            </div>
+            <!-- Dynamic Chapter Cards will inject here -->
+        </div>
+
+        <!-- Exams Section -->
+        <h2 class="section-title">
+            Past Papers & Mock Exams
+        </h2>
+        <div class="grid-list" id="exams-list">
+            <!-- Dropzone for new exam -->
+            <div class="dropzone" id="dz-exam" style="border-color: rgba(168, 85, 247, 0.3);">
+                <input type="file" accept=".pdf,.txt" id="file-exam" multiple>
+                <div style="font-size: 2rem; margin-bottom: 10px;">📝</div>
+                <strong>Upload Past Paper</strong>
+                <p style="margin: 5px 0 0 0; font-size: 0.85rem; color: #a0a5ba;">Extracts format & answers</p>
+            </div>
+            <!-- Dynamic Exam Cards will inject here -->
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal-overlay" id="loading-modal">
+        <div class="modal-card">
+            <div class="spinner"></div>
+            <h3 id="loading-title">Processing...</h3>
+            <p id="loading-desc" style="color: #a0a5ba; font-size: 0.9rem;">AI is meticulously reading and compiling.</p>
+        </div>
+    </div>
+
+    <script src="ai_service.js"></script>
+    <script src="module_hub.js"></script>
+</body>
+</html>

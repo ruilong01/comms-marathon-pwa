@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base</title>
+    <!-- PWA & iOS Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f111a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="knowledge.css">
+</head>
+<body>
+    <div class="dynamic-background">
+        <div class="glow-orb red"></div>
+        <div class="glow-orb blue"></div>
+        <div class="glow-orb purple"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="kb-nav">
+        <a href="#" id="back-link" class="nav-back">← Hub</a>
+        <span class="nav-title" id="kb-nav-title">📚 Knowledge Base</span>
+    </nav>
+
+    <div class="kb-container">
+        <!-- HERO -->
+        <header class="kb-hero glass-card">
+            <div class="hero-text">
+                <p class="hero-tag" id="kb-tag">AI Generated Study Plan</p>
+                <h1 id="kb-title">Master Plan</h1>
+                <p class="hero-sub">Read the comprehensive summary below generated from your uploaded materials before attempting the exams.</p>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Mount -->
+        <div id="dynamic-content-mount">
+            <!-- Overall Summary goes here -->
+        </div>
+
+        <div id="chapters-mount" style="margin-top: 40px;">
+            <!-- Chapter summaries go here -->
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const moduleName = urlParams.get('module');
+        
+        document.getElementById('back-link').href = moduleName ? `module_hub.html?module=${encodeURIComponent(moduleName)}` : 'index.html';
+        if(moduleName) {
+            document.getElementById('kb-nav-title').innerText = "📚 " + moduleName;
+            document.getElementById('kb-title').innerText = moduleName + " Overview";
+            document.title = moduleName + " - Knowledge Base";
+        }
+
+        function renderDynamicKnowledge() {
+            let dict = JSON.parse(localStorage.getItem('dynamic_modules') || '[]');
+            let mod = dict.find(m => m.name === moduleName);
+            if(!mod) return;
+
+            const contentMount = document.getElementById('dynamic-content-mount');
+            if (mod.overallSummary) {
+                const section = document.createElement('section');
+                section.className = 'kb-section glass-card';
+                section.style.padding = '2rem';
+                section.innerHTML = `
+                    <h2 style="color:#a855f7; margin-bottom:1rem;">Module Master Plan</h2>
+                    <div style="line-height:1.6; color:#b0bdc8;">${mod.overallSummary}</div>
+                `;
+                contentMount.appendChild(section);
+            } else {
+                contentMount.innerHTML = '<p style="text-align:center; color:#a0a5ba; margin-top:20px;">No overall summary generated yet. Add more chapters to compile a Master Plan.</p>';
+            }
+
+            const chapMount = document.getElementById('chapters-mount');
+            if (mod.chapters && mod.chapters.length > 0) {
+                mod.chapters.forEach(chap => {
+                    if(!chap.summary) return;
+                    const section = document.createElement('section');
+                    section.className = 'kb-section';
+                    section.innerHTML = `
+                        <div class="section-header">
+                            <span class="section-icon">📖</span>
+                            <div><h2>${chap.name}</h2></div>
+                        </div>
+                        <div class="glass-card" style="padding:1.5rem; line-height:1.6; color:#b0bdc8;">
+                            ${chap.summary}
+                        </div>
+                    `;
+                    chapMount.appendChild(section);
+                });
+            }
+        }
+
+        window.onload = renderDynamicKnowledge;
+    </script>
+</body>
+</html>
