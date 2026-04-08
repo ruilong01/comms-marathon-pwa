@@ -13,6 +13,12 @@ const createModuleBtn = document.getElementById('create-module-btn');
 const createModal = document.getElementById('create-modal');
 const closeCreateBtn = document.getElementById('close-create-btn');
 
+const newModuleNameInput = document.getElementById('new-module-name');
+const generateBtn = document.getElementById('generate-btn');
+const loadingState = document.getElementById('loading-state');
+const loadingText = document.getElementById('loading-text');
+const modulesList = document.getElementById('modules-list');
+
 // Initialize
 function init() {
     renderModules();
