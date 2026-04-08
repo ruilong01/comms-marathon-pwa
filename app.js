@@ -266,3 +266,14 @@ function handleSubmission() {
 
 // Boot
 window.onload = init;
+
+// Expose context for Chatbot
+window.getCurrentChatContext = function() {
+    if (!currentQ) return "Student is at the quiz menu.";
+    
+    // We strictly serialize the current question text so the AI knows what they are looking at
+    let ctx = `Question: ${currentQ.prompt}\n`;
+    if (currentQ.options) ctx += `Options: ${currentQ.options.join(', ')}\n`;
+    if (currentQ.explanation) ctx += `[Hidden Solution: ${currentQ.explanation}]\n`;
+    return ctx;
+};

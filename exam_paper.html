@@ -246,6 +246,13 @@
         });
 
         window.onload = loadExam;
+
+        window.getCurrentChatContext = function() {
+            if(!currentExam) return "Student is at exam paper but it hasn't loaded.";
+            return `Student is taking this Mock Exam: ${currentExam.title}.\nExam Instructions: ${currentExam.instructions || ''}\nQuestions in this exam point back to the uploaded past paper.`;
+        };
     </script>
+    <script src="ai_service.js"></script>
+    <script src="chatbot.js"></script>
 </body>
 </html>

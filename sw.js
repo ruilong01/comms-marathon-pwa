@@ -1,4 +1,4 @@
-const CACHE_NAME = 'comms-quiz-v2';
+const CACHE_NAME = 'comms-quiz-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -8,10 +8,12 @@ const ASSETS_TO_CACHE = [
   './exam_paper.html',
   './styles.css',
   './knowledge.css',
+  './chatbot.css',
   './app.js',
   './dashboard.js',
   './module_hub.js',
   './ai_service.js',
+  './chatbot.js',
   './data.js',
   './knowledge.js',
   './manifest.json',

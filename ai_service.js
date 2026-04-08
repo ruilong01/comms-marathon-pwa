@@ -121,7 +121,28 @@ Use aesthetic semantic HTML (like <h3>, <p>, <div class="highlight">, <ul>). Do 
 CHAPTERS IN MODULE:
 ${context}
 `;
-    // We don't strictly require JSON for this, just raw HTML string
+// We don't strictly require JSON for this, just raw HTML string
     const rawHtml = await callGemini(prompt, apiKey, false);
     return rawHtml.trim();
+}
+
+// ----------------------------------------------------
+// 4. CHAT WITH TUTOR
+// ----------------------------------------------------
+async function chatWithTutor(message, apiKey, context) {
+    const prompt = `You are a helpful AI Tutor embedded inside an educational app.
+A student is asking you a question. Keep your answer brief, encouraging, and highly specific to the context. 
+If they ask for an answer to a question, subtly guide them to the answer rather than just bluntly giving it, but if they ask "explain why" then give a full explanation.
+Use simple HTML (like <strong>, <em>, <br>) so your response is formatted nicely. Do NOT use markdown.
+
+--- CURRENT CONTEXT / WHAT THE STUDENT IS LOOKING AT ---
+${context}
+
+--- STUDENT QUESTION ---
+${message}
+`;
+
+    // Standard string response, no JSON constraint needed
+    const rawParams = await callGemini(prompt, apiKey, false);
+    return rawParams.trim();
 }
