@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base – Digital Signal Processing</title>
+    <meta name="description" content="Compressed study guide for DSP covering sampling, aliasing, transforms, and filtering.">
+    <!-- PWA & iOS Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f111a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="knowledge.css">
+    <style>
+        /* Specific tweaks for math-heavy styling */
+        .math-block {
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-weight: bold;
+            color: #00c3ff;
+            text-align: center;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dynamic-background">
+        <div class="glow-orb red" style="background: radial-gradient(circle, rgba(0,255,150,0.15) 0%, rgba(0,255,150,0) 70%);"></div>
+        <div class="glow-orb blue"></div>
+        <div class="glow-orb purple"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="kb-nav">
+        <a href="index.html" class="nav-back">← Dashboard</a>
+        <span class="nav-title">📚 DSP Knowledge Base</span>
+        <div class="nav-pills">
+            <a href="#signals" class="nav-pill">Signals</a>
+            <a href="#sampling" class="nav-pill">Sampling</a>
+            <a href="#aliasing" class="nav-pill">Aliasing</a>
+            <a href="#cheatsheet" class="nav-pill">Transforms</a>
+        </div>
+    </nav>
+
+    <div class="kb-container">
+
+        <!-- HERO -->
+        <header class="kb-hero glass-card" style="border-color: rgba(0,255,150,0.3);">
+            <div class="hero-text">
+                <p class="hero-tag" style="color: #00ff96; background: rgba(0,255,150,0.1);">🌊 Digital Signal Processing · Weeks 1–13</p>
+                <h1>Mastering the Discrete Domain</h1>
+                <p class="hero-sub">From continuous analog waves to discrete digital sequences. Compiled statically for zero-latency review.</p>
+            </div>
+            <div class="hero-svg-wrap">
+                <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg" class="hero-svg">
+                    <!-- Analog Sine Wave -->
+                    <path d="M 20 80 Q 45 20, 70 80 T 120 80 T 170 80" fill="none" stroke="#4b7bff44" stroke-width="2" stroke-dasharray="4 2"/>
+                    <!-- Digital Samples -->
+                    <line x1="20" y1="80" x2="20" y2="80" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="45" y1="80" x2="45" y2="35" stroke="#00e676" stroke-width="2"/>
+                    <circle cx="45" cy="35" r="4" fill="#00e676"/>
+                    <line x1="70" y1="80" x2="70" y2="80" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="95" y1="80" x2="95" y2="125" stroke="#00e676" stroke-width="2"/>
+                    <circle cx="95" cy="125" r="4" fill="#00e676"/>
+                    <line x1="120" y1="80" x2="120" y2="80" stroke="#00e676" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="145" y1="80" x2="145" y2="35" stroke="#00e676" stroke-width="2"/>
+                    <circle cx="145" cy="35" r="4" fill="#00e676"/>
+                    <!-- Base Axis -->
+                    <line x1="10" y1="80" x2="200" y2="80" stroke="#ffffff44" stroke-width="1"/>
+                </svg>
+            </div>
+        </header>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- SECTION 1: DISCRETE SIGNALS                     -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="signals" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">📈</span>
+                <div>
+                    <h2>Discrete-Time Signals</h2>
+                    <p class="section-sub">Vectors, Impulses, and Mathematical Manipulations (Week 1)</p>
+                </div>
+            </div>
+
+            <div class="three-col">
+                <div class="concept-card accent-blue">
+                    <div class="concept-icon">🔢</div>
+                    <h3>Sequence Representation</h3>
+                    <p>Digital signals are purely mathematical sequences of numbers plotted against a discrete time index `n`.</p>
+                    <div class="math-block">x[n] = { 1.5, 2.0, -1.0, 0.5 }</div>
+                </div>
+                <div class="concept-card accent-purple">
+                    <div class="concept-icon">📌</div>
+                    <h3>The Impulse Function δ[n]</h3>
+                    <p>The delta/impulse function is 1 precisely at n=0, and 0 everywhere else. All other signals can be formed by summing shifted impulses.</p>
+                    <div class="math-block">δ[n] = 1 for n=0, else 0</div>
+                </div>
+                <div class="concept-card" style="border-color: rgba(0,255,150,0.3); background: rgba(0,255,150,0.05);">
+                    <div class="concept-icon">⏪</div>
+                    <h3>Signal Delay  </h3>
+                    <p>Shifting a signal mathematically. A delay pushes the signal into the future (shifts graphic RIGHT by k samples).</p>
+                    <div class="math-block">y[n] = x[n - k]</div>
+                </div>
+            </div>
+
+            <div class="info-card accent-blue">
+                <h3>🔄 Signal Formatting Examples</h3>
+                <ul class="kb-list">
+                    <li><strong>Exponential Decay:</strong> x[n] = (0.5)^n . Because the base (0.5) is less than 1, the signal physically decays exponentially towards 0 over time. </li>
+                    <li><strong>Time Scaling:</strong> x[-n] mathematically reverses the signal around the Y-axis. x[2n] compresses the signal, discarding every odd sample.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 2: SAMPLING                     -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="sampling" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">🎛️</span>
+                <div>
+                    <h2>A/D Conversion &amp; Sampling</h2>
+                    <p class="section-sub">Extracting discrete points from continuous analog mediums.</p>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="concept-card accent-red">
+                    <h3>The Normalized Frequency</h3>
+                    <p>In analog, frequency is <strong>Hz (cycles per second)</strong>. In digital, time is stripped away, leaving only "samples". We normalize frequency to radians per sample.</p>
+                    <div class="math-block">ω = 2π * (F / Fs)</div>
+                    <p style="font-size: 0.85rem">Fs is your Sampling Frequency. The highest mathematically representable angular frequency in DSP is ω = π.</p>
+                </div>
+                <div class="concept-card accent-blue">
+                    <h3>Periodicity of Sinusoids</h3>
+                    <p>In the analog world, ALL sine waves are periodic. But in Discrete DSP, a digital sine wave is ONLY periodic if its frequency (F/Fs) is a <strong>pure rational number</strong>.</p>
+                    <div class="math-block">N = 2π / ω * k</div>
+                    <p style="font-size: 0.85rem">If the result N is an integer, the sequence is perfectly periodic repeating every N samples.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 3: ALIASING                    -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="aliasing" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">👻</span>
+                <div>
+                    <h2>The Aliasing Phenomenon</h2>
+                    <p class="section-sub">What happens when you sample too slowly!</p>
+                </div>
+            </div>
+
+            <div class="steps-card glass-card">
+                <h3 class="diagram-title">📉 Nyquist-Shannon Sampling Theorem</h3>
+                <p style="text-align:center; color:#b0bdc8;">To perfectly reconstruct an analog signal without artifacts, you MUST sample the signal at a frequency greater than TWICE its highest frequency component.</p>
+                <div class="math-block" style="font-size: 1.5rem; margin: 20px auto; width: 50%;">Fs > 2 * F_max</div>
+            </div>
+
+            <div class="highlight-card red-hl">
+                <div class="highlight-icon">⚠️</div>
+                <div>
+                    <h3>Folding / Aliasing Collisions</h3>
+                    <p>If you fail the Nyquist condition (e.g. sampling a 170Hz wave at exactly 200Hz), the high frequency wave mathematically "folds" back over the spectrum and masquerades as a low-frequency wave. The computer will incorrectly interpret the 170Hz wave as a 30Hz ghost signal!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 4: CHEATSHEET / Z-TRANSFORMS   -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="cheatsheet" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">⚡</span>
+                <div>
+                    <h2>Advanced DSP Cheat Sheet</h2>
+                    <p class="section-sub">The holy grail of Z-Transforms, FIR, and IIR filtering.</p>
+                </div>
+            </div>
+            <div class="cheatsheet glass-card" style="border-color: rgba(168, 85, 247, 0.4);">
+                <div class="cs-grid">
+                    <div class="cs-item"><span class="cs-label">Nyquist Rate</span><span class="cs-val">Fs ≥ 2F_max</span></div>
+                    <div class="cs-item"><span class="cs-label">Angular frequency ω</span><span class="cs-val">2π(F/Fs)</span></div>
+                    <div class="cs-item"><span class="cs-label">Z-Transform function X(z)</span><span class="cs-val">Σ x[n]z^-n</span></div>
+                    <div class="cs-item"><span class="cs-label">Time Delay (n-k) in Z</span><span class="cs-val">Z^-k * X(z)</span></div>
+                    <div class="cs-item"><span class="cs-label">FIR Filter</span><span class="cs-val">Finite, Always Stable, No Feedback</span></div>
+                    <div class="cs-item"><span class="cs-label">IIR Filter</span><span class="cs-val">Infinite, Uses Feedback (y[n-1]), Can be unstable</span></div>
+                    <div class="cs-item"><span class="cs-label">Convolution (Time)</span><span class="cs-val">Multiplication (Frequency/Z)</span></div>
+                    <div class="cs-item"><span class="cs-label">Poles strictly inside Unit Circle</span><span class="cs-val">System is STABLE</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER NAV -->
+        <footer class="kb-footer">
+            <a href="quiz_dsp.html" class="action-btn footer-btn" style="background: rgba(0,255,150,0.1); border-color: rgba(0,255,150,0.3); color: #00ff96;">🏁 Go Crush the DSP Quiz →</a>
+        </footer>
+
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js');
+            });
+        }
+    </script>
+</body>
+</html>
