@@ -45,6 +45,7 @@ You MUST format the "summary" HTML using our specific beautiful CSS design syste
 5. Lists: <ul class="kb-list"><li>...</li></ul>
 6. Formulas or rules: <div class="formula-box blue">...</div>
 7. Examples inside cards: <div class="example-box">...</div>
+8. DIAGRAMS & FLOWCHARTS: You possess the ability to draw flowcharts, state machines, and relational graphs. You MUST use Mermaid.js syntax inside a <pre class="mermaid"> block whenever a concept is better explained visually (e.g., <pre class="mermaid">graph TD; A-->B;</pre>). This is EXTREMELY important for visual learners.
 
 Respond EXACTLY with this raw JSON object schema:
 {
@@ -137,6 +138,7 @@ You MUST format your ONLY output in raw HTML using our specific beautiful CSS de
 5. Lists: <ul class="kb-list"><li>...</li></ul>
 6. Formulas or rules: <div class="formula-box blue">...</div>
 7. Examples inside cards: <div class="example-box">...</div>
+8. ARCHITECTURE & DIAGRAMS (CRITICAL): Since this is a massive Revision Guide, you MUST visually map out concepts using Mermaid.js. Embed Mermaid diagrams inside a <pre class="mermaid"> block to show timelines, hierarchy, code architecture, protocol flow, etc (e.g., <pre class="mermaid">graph TD; A-->B;</pre>). Be highly illustrative!
 
 Do NOT use markdown code blocks (\`\`\`). JUST output the raw HTML exactly.
 
