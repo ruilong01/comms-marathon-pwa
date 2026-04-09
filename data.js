@@ -60,6 +60,66 @@ const staticQuestions = [
     // --- MCQs ---
     {
         type: 'mcq',
+        prompt: 'The maximum data rate for IEEE 802.11a is _____ Mbps while that for 802.11b is _____ Mbps.',
+        options: [
+            '11, 54',
+            '54, 11',
+            '21, 64',
+            '64, 21'
+        ],
+        correctIndex: 1,
+        explanation: 'IEEE 802.11a operates in the 5 GHz band and offers a robust 54 Mbps. Alternatively, the older IEEE 802.11b operates in the crowded 2.4 GHz band and maxes out at exactly 11 Mbps. Be careful not to swap them!'
+    },
+    {
+        type: 'mcq',
+        prompt: 'The contention based MAC service is offered via the _______ Function in 802.11 WLAN.',
+        options: [
+            'Frame Coordination',
+            'Point Coordination',
+            'Distributed Coordination',
+            'Infrastructure Coordination'
+        ],
+        correctIndex: 2,
+        explanation: 'The Distributed Coordination Function (DCF) is the absolute foundation of 802.11 MAC, utilizing mathematical CSMA/CA variables to allow multiple independent stations to contend fairly for the airwaves. By contrast, the Point Coordination Function (PCF) is contention-free and centrally controlled by the AP.'
+    },
+    {
+        type: 'mcq',
+        prompt: 'The Access Point (AP) and the wireless stations that are affiliated with it collectively form the _______ Set.',
+        options: [
+            'Server',
+            'Destination',
+            'MAC',
+            'Basic Service'
+        ],
+        correctIndex: 3,
+        explanation: 'A Basic Service Set (BSS) is the fundamental building block of an 802.11 infrastructure network, practically consisting of exactly one central Access Point and all the wireless clients actively linked to it.'
+    },
+    {
+        type: 'mcq',
+        prompt: 'The _______ Counter needs to count down to zero before a station can look for the transmission opportunity.',
+        options: [
+            'Window',
+            'Backoff Time',
+            'Transmitting',
+            'Backup Time'
+        ],
+        correctIndex: 1,
+        explanation: 'Under CSMA/CA, if the medium is busy, a station must generate a random Backoff Time Counter. The station rigorously listens to the air; if it is idle, the counter ticks down. It can only boldly transmit when the counter successfully hits exactly zero.'
+    },
+    {
+        type: 'mcq',
+        prompt: 'Before a 802.11 wireless station can access the network services, it must _______ with an Access Point (AP).',
+        options: [
+            'commit',
+            'generate',
+            'transmit',
+            'associate'
+        ],
+        correctIndex: 3,
+        explanation: 'In 802.11 architecture, a wireless station cannot just start transmitting data. It must first Scan for beacons, formally Authenticate, and finally formally Associate with the Access Point to officially join the BSS.'
+    },
+    {
+        type: 'mcq',
         prompt: 'The backbone network that connects the various APs are known as the _______ System.',
         options: [
             'Distributed',
