@@ -33,6 +33,16 @@ window.addEventListener('beforeunload', (e) => {
 function init() {
     renderHub();
 
+    document.getElementById('btn-clear-module').addEventListener('click', (e) => {
+        if(confirm("🚨 WARNING: Are you absolutely sure you want to permanently delete ALL Chapters and Exams in this module? This cannot be undone!")) {
+            const mod = getModule();
+            mod.chapters = [];
+            mod.exams = [];
+            saveModule(mod);
+            renderHub();
+        }
+    });
+
     document.getElementById('btn-quiz').addEventListener('click', (e) => {
         e.preventDefault();
         const mod = getModule();
