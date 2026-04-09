@@ -243,6 +243,61 @@
     line-height: 1.7;
 }
 
+/* ─── Expandable Accordions ─── */
+details.kb-accordion {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    margin-top: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+details.kb-accordion[open] {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: var(--accent-blue);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+summary.kb-summary {
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    list-style: none; /* Hide default arrow */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+}
+summary.kb-summary::-webkit-details-marker {
+    display: none;
+}
+summary.kb-summary:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+summary.kb-summary::after {
+    content: "▼";
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+details.kb-accordion[open] summary.kb-summary::after {
+    transform: rotate(180deg);
+    color: var(--accent-blue);
+}
+.kb-accordion.red[open] { border-color: var(--accent-red); }
+.kb-accordion.red[open] summary.kb-summary::after { color: var(--accent-red); }
+
+.kb-details-content {
+    padding: 1.2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    font-size: 0.93rem;
+    line-height: 1.6;
+}
+
 /* ─── Highlight Cards ─── */
 .highlight-card {
     display: flex;

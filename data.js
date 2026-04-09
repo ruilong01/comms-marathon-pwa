@@ -57,8 +57,43 @@ const staticQuestions = [
         correctIndex: 0,
         explanation: 'True. The protocol explicitly staples a 4-Byte VLAN identifier squarely between the MAC Source and the Type/Length block.'
     },
-    
     // --- MCQs ---
+    {
+        type: 'mcq',
+        prompt: 'Which OSI Model Layer is explicitly responsible for end-to-end reliability, establishing connections, and ensuring packets arrive perfectly intact across the network?',
+        options: [
+            'Layer 2: Data Link Layer',
+            'Layer 3: Network Layer',
+            'Layer 4: Transport Layer',
+            'Layer 7: Application Layer'
+        ],
+        correctIndex: 2,
+        explanation: 'The Transport Layer (Layer 4) handles host-to-host communication and reliability. Protocols like TCP reside here to guarantee end-to-end packet delivery.'
+    },
+    {
+        type: 'mcq',
+        prompt: 'When transmitting a frame using flag bytes, what process prevents payload data from accidentally terminating the frame if it matches a flag byte precisely?',
+        options: [
+            'Cyclic Redundancy Calculation (CRC)',
+            'Byte/Bit Stuffing',
+            'CSMA/CD Backoff protocol',
+            'VLAN Tagging'
+        ],
+        correctIndex: 1,
+        explanation: 'Byte Stuffing (or Bit Stuffing) actively inserts escape characters or zeroes whenever the payload coincidentally mimics a termination flag, preventing premature frame termination.'
+    },
+    {
+        type: 'mcq',
+        prompt: 'Why would an application choose to strictly use UDP instead of TCP?',
+        options: [
+            'UDP perfectly guarantees packet delivery without failure.',
+            'UDP possesses robust congestion control for large downloads.',
+            'UDP establishes an intensive 3-way handshake to secure military data.',
+            'UDP avoids all connection overhead, drastically reducing latency for real-time streaming.'
+        ],
+        correctIndex: 3,
+        explanation: 'UDP is a connectionless protocol. It does not wait for ACKs or handshakes, rendering it lightning-fast but completely unreliable. It is the gold standard for latency-sensitive apps like VoIP and gaming where speed outweighs dropped packets.'
+    },
     {
         type: 'mcq',
         prompt: 'Which hardware device breaks up a network into multiple distinct isolated Collision Domains, but leaves the entire physical structure as one massive Broadcast Domain?',

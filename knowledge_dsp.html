@@ -12,6 +12,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
 
+    <!-- MathJax for gorgeous LaTeX rendering -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -20,15 +23,11 @@
     <style>
         /* Specific tweaks for math-heavy styling */
         .math-block {
-            font-family: 'Courier New', Courier, monospace;
             background: rgba(0,0,0,0.3);
             padding: 0.8rem;
             border-radius: 6px;
-            font-weight: bold;
-            color: #00c3ff;
             text-align: center;
             margin: 10px 0;
-            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -184,22 +183,90 @@
             <div class="section-header">
                 <span class="section-icon">⚡</span>
                 <div>
-                    <h2>Advanced DSP Cheat Sheet</h2>
-                    <p class="section-sub">The holy grail of Z-Transforms, FIR, and IIR filtering.</p>
+                    <h2>Advanced Math &amp; Filtering (Weeks 2-13)</h2>
+                    <p class="section-sub">Expand the panels below to dive into the mathematical proofs for Z-Transforms, IIR, and FIR filters.</p>
                 </div>
             </div>
-            <div class="cheatsheet glass-card" style="border-color: rgba(168, 85, 247, 0.4);">
-                <div class="cs-grid">
-                    <div class="cs-item"><span class="cs-label">Nyquist Rate</span><span class="cs-val">Fs ≥ 2F_max</span></div>
-                    <div class="cs-item"><span class="cs-label">Angular frequency ω</span><span class="cs-val">2π(F/Fs)</span></div>
-                    <div class="cs-item"><span class="cs-label">Z-Transform function X(z)</span><span class="cs-val">Σ x[n]z^-n</span></div>
-                    <div class="cs-item"><span class="cs-label">Time Delay (n-k) in Z</span><span class="cs-val">Z^-k * X(z)</span></div>
-                    <div class="cs-item"><span class="cs-label">FIR Filter</span><span class="cs-val">Finite, Always Stable, No Feedback</span></div>
-                    <div class="cs-item"><span class="cs-label">IIR Filter</span><span class="cs-val">Infinite, Uses Feedback (y[n-1]), Can be unstable</span></div>
-                    <div class="cs-item"><span class="cs-label">Convolution (Time)</span><span class="cs-val">Multiplication (Frequency/Z)</span></div>
-                    <div class="cs-item"><span class="cs-label">Poles strictly inside Unit Circle</span><span class="cs-val">System is STABLE</span></div>
+            
+            <details class="kb-accordion" style="border-color: rgba(168, 85, 247, 0.4);">
+                <summary class="kb-summary">
+                    <span>The Z-Transform defined</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>The Z-Transform perfectly maps a discrete-time signal \( x[n] \) into the complex frequency domain (the Z-plane). It is functionally equivalent to the Laplace transform used in continuous-time physics.</p>
+                    <div style="font-size: 1.2rem; margin: 15px 0;">
+                        \[ X(z) = \sum_{n=-\infty}^{\infty} x[n] z^{-n} \]
+                    </div>
+                    <ul class="kb-list" style="margin-top: 10px;">
+                        <li><strong>Time Delay Theorem:</strong> Physically delaying a signal \( x[n-k] \) perfectly equates to multiplying the Z-domain representation by \( z^{-k} \).</li>
+                        <li><strong>Convolution Theorem:</strong> Convolution in the time domain precisely equals strict multiplication in the Z-domain: \( y[n] = x[n] * h[n] \implies Y(z) = X(z)H(z) \).</li>
+                    </ul>
                 </div>
-            </div>
+            </details>
+
+            <details class="kb-accordion" style="border-color: rgba(75, 123, 255, 0.4);">
+                <summary class="kb-summary">
+                    <span>Difference Equations</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>Digital systems are implemented universally via linear constant-coefficient difference equations linking past and current inputs \( x[n] \) to outputs \( y[n] \).</p>
+                    <div style="font-size: 1.2rem; margin: 15px 0;">
+                        \[ \sum_{k=0}^{N} a_k y[n-k] = \sum_{m=0}^{M} b_m x[n-m] \]
+                    </div>
+                    <p>Assuming \( a_0 = 1 \), the current system output physically computes as:</p>
+                    <div style="font-size: 1.2rem; margin: 15px 0;">
+                        \[ y[n] = \sum_{m=0}^{M} b_m x[n-m] - \sum_{k=1}^{N} a_k y[n-k] \]
+                    </div>
+                </div>
+            </details>
+
+            <details class="kb-accordion red">
+                <summary class="kb-summary">
+                    <span>FIR vs IIR Filter Systems</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>There are two fundamental topologies physically employed in discrete filter engineering.</p>
+                    
+                    <div class="info-card accent-blue" style="margin: 15px 0 10px; background: rgba(75,123,255,0.05);">
+                        <h3>Finite Impulse Response (FIR)</h3>
+                        <ul class="kb-list">
+                            <li>Equation restricts strictly to inputs: \( y[n] = \sum b_m x[n-m] \)</li>
+                            <li><strong>Absolutely No Feedback:</strong> It strictly cannot feed outputs back into itself.</li>
+                            <li>Condition: Unconditionally mathematically stable.</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card accent-red" style="margin: 10px 0; background: rgba(255,75,75,0.05);">
+                        <h3>Infinite Impulse Response (IIR)</h3>
+                        <ul class="kb-list">
+                            <li>Employs violent mathematical feedback loops: \( a_k y[n-k] \)</li>
+                            <li><strong>Poles:</strong> Because of feedback, the denominator of its transfer function \( H(z) \) possesses roots (poles).</li>
+                            <li>Condition: The filter is only strictly physically stable if ALL mathematical poles exist entirely inside the Unit Circle: \( |z| < 1 \).</li>
+                        </ul>
+                    </div>
+                </div>
+            </details>
+
+            <details class="kb-accordion" style="border-color: rgba(0, 255, 150, 0.4);">
+                <summary class="kb-summary">
+                    <span>Pole-Zero Analysis</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>Evaluating the transfer function \( H(z) = Y(z) / X(z) \):</p>
+                    <div style="font-size: 1.2rem; margin: 15px 0;">
+                        \[ H(z) = \frac{\sum b_m z^{-m}}{\sum a_k z^{-k}} \implies H(z) = \frac{N(z)}{D(z)} \]
+                    </div>
+                    <ul class="kb-list">
+                        <li><strong>Zeros:</strong> Roots of the numerator \( N(z) \). Whenever \( z \) equals a zero, the system completely annihilates that frequency.</li>
+                        <li><strong>Poles:</strong> Roots of the denominator \( D(z) \). Whenever \( z \) identically equals a pole, the system response mathematically explodes towards infinity.</li>
+                        <li><strong>Stability Law:</strong> The absolute Region of Convergence (ROC) must strictly encompass the unit circle (\( |z| = 1 \)) for the system to remain mathematically stable!</li>
+                    </ul>
+                </div>
+            </details>
         </section>
 
         <!-- FOOTER NAV -->

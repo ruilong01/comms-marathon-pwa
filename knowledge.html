@@ -12,6 +12,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="icon.png">
 
+    <!-- MathJax for gorgeous LaTeX rendering -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
@@ -44,7 +47,7 @@
         <!-- HERO -->
         <header class="kb-hero glass-card">
             <div class="hero-text">
-                <p class="hero-tag">📡 Computer Communications · Weeks 7–11</p>
+                <p class="hero-tag">📡 Computer Communications · Weeks 1–13</p>
                 <h1>Everything You Need to Know</h1>
                 <p class="hero-sub">Compressed, high-yield knowledge for the marathon. Read this, then crush the quiz.</p>
             </div>
@@ -73,6 +76,65 @@
                 </svg>
             </div>
         </header>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- SECTION 0: FOUNDATIONS & DATA LINK LAYER       -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="foundations" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">🔗</span>
+                <div>
+                    <h2>Foundations &amp; Data Link Layer (Weeks 1-6)</h2>
+                    <p class="section-sub">Fundamental data communication models, framing, and error detection.</p>
+                </div>
+            </div>
+
+            <details class="kb-accordion" style="border-color: rgba(75, 123, 255, 0.4);">
+                <summary class="kb-summary">
+                    <span>The OSI vs TCP/IP Models</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>Networks operate on stacked logical layers. The <strong>OSI Model</strong> defines 7 explicit physical and logical boundaries, while <strong>TCP/IP</strong> compresses them into 4 or 5 pragmatic layers.</p>
+                    <ul class="kb-list" style="margin-top: 10px;">
+                        <li><strong>Application (L7):</strong> Network process to application (HTTP, FTP, SMTP).</li>
+                        <li><strong>Transport (L4):</strong> End-to-end data delivery and reliability (TCP, UDP).</li>
+                        <li><strong>Network (L3):</strong> Routing packets across disparate networks (IP, Routers).</li>
+                        <li><strong>Data Link (L2):</strong> Node-to-node framing across a physical wire (MAC, Switches).</li>
+                        <li><strong>Physical (L1):</strong> Electrical signaling across the raw cable (Hubs, Cables).</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details class="kb-accordion red" style="border-color: rgba(255, 75, 75, 0.4);">
+                <summary class="kb-summary">
+                    <span>Framing &amp; Byte Stuffing</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>The Data Link Layer is tasked with identifying where a block of physical bits structurally starts and ends. This is called <strong>Framing</strong>.</p>
+                    <div class="info-card accent-red" style="margin-top: 10px; padding: 15px;">
+                        <p><strong>Flag Bytes:</strong> Special bit patterns (like <code>01111110</code>) are injected to definitively mark the start and end of a physical frame.</p>
+                        <p><strong>Byte/Bit Stuffing:</strong> If the actual payload data coincidentally contains the Flag Byte pattern, the network will prematurely terminate! To prevent this, the transmitter mathematically injects an "Escape" byte (or stuffs a continuous 0) purely to break the pattern. The receiver dynamically extracts it back out.</p>
+                    </div>
+                </div>
+            </details>
+            
+            <details class="kb-accordion" style="border-color: rgba(168, 85, 247, 0.4);">
+                <summary class="kb-summary">
+                    <span>Cyclic Redundancy Check (CRC)</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>CRC is a robust error-detecting polynomial code specifically engineered to detect accidental changes to raw data.</p>
+                    <ul class="kb-list" style="margin-top: 10px;">
+                        <li>If the generator polynomial is \( G(x) \) of degree \( r \), you mechanically append \( r \) zeroes to the end of the data payload \( D(x) \).</li>
+                        <li>You perform binary long division (XOR mathematics) of the shifted data by the generator.</li>
+                        <li>The resulting <strong>Remainder</strong> is explicitly slapped onto the original data and transmitted. If the receiver inherently calculates a remainder of zero, the data is flawlessly intact.</li>
+                    </ul>
+                </div>
+            </details>
+        </section>
 
         <!-- ═══════════════════════════════════════════════ -->
         <!-- SECTION 1: MAC PROTOCOLS OVERVIEW              -->
@@ -526,6 +588,65 @@
                     All-ones (FF-FF-FF-FF-FF-FF) = broadcast ✅
                 </div>
             </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════ -->
+        <!-- SECTION 7: TRANSPORT LAYER             -->
+        <!-- ═══════════════════════════════════════ -->
+        <section id="transport" class="kb-section">
+            <div class="section-header">
+                <span class="section-icon">🚢</span>
+                <div>
+                    <h2>Transport Layer &amp; Checksums (Weeks 12-13)</h2>
+                    <p class="section-sub">TCP, UDP, and End-to-End Logical Host Reliability.</p>
+                </div>
+            </div>
+
+            <details class="kb-accordion" style="border-color: rgba(75, 123, 255, 0.4);">
+                <summary class="kb-summary">
+                    <span>TCP vs UDP Characteristics</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <div class="two-col" style="margin-top: 10px;">
+                        <div class="info-card accent-blue" style="padding: 15px;">
+                            <h3 style="margin-bottom: 5px;">TCP (Transmission Control Protocol)</h3>
+                            <ul class="kb-list">
+                                <li><strong>Connection-Oriented:</strong> Enforces a strict 3-way handshake before talking.</li>
+                                <li><strong>Reliable:</strong> Uses acknowledgements (ACKs) and retransmissions.</li>
+                                <li><strong>Congestion Control:</strong> Dynamically throttles speed based on network physics.</li>
+                                <li>Used for: Web (HTTP), Email (SMTP), File Transfer (FTP).</li>
+                            </ul>
+                        </div>
+                        <div class="info-card accent-red" style="padding: 15px;">
+                            <h3 style="margin-bottom: 5px;">UDP (User Datagram Protocol)</h3>
+                            <ul class="kb-list">
+                                <li><strong>Connectionless:</strong> Blasts packets instantly without establishing a connection.</li>
+                                <li><strong>Unreliable:</strong> Zero guarantee of delivery! No ACKs, No retransmissions.</li>
+                                <li><strong>Fast &amp; Barebones:</strong> Significantly lower overhead and latency.</li>
+                                <li>Used for: Streaming Video, Voice VoIP, Online Gaming.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <details class="kb-accordion red" style="border-color: rgba(255, 75, 75, 0.4);">
+                <summary class="kb-summary">
+                    <span>Internet Checksum Calculation</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>The standard Internet Checksum (used fundamentally in IPv4, TCP, and UDP) is a fast <strong>16-bit One's Complement Summation</strong>.</p>
+                    <ol class="kb-list-ol" style="margin-top: 10px;">
+                        <li>Partition the entire data sequence into 16-bit binary segments.</li>
+                        <li>Add them fundamentally together using standard binary addition.</li>
+                        <li>If a high-bit carry overflows past 16 bits, it "wraps around" and is added inherently to the rightmost bit of the result (end-around carry).</li>
+                        <li>The final computed Checksum is the <strong>One's Complement (bitwise NOT)</strong> of the finalized aggregated sum!</li>
+                        <li><strong>Validation:</strong> The receiver inherently totals ALL data words AND the checksum. If the result is universally `1111111111111111`, the packet is valid!</li>
+                    </ol>
+                </div>
+            </details>
         </section>
 
         <!-- QUICK REFERENCE CARD -->
