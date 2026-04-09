@@ -55,7 +55,8 @@ if (moduleName) {
         });
 
         if(aggregatedQuestions.length === 0) {
-            alert("No questions found! Make sure you uploaded a chapter first.");
+            console.log("Using classic data fallback.");
+            // Do not override window.getRandomQuestion so it natively defaults to data.js
         } else {
             // Override the global getRandomQuestion from data.js
             window.getRandomQuestion = function() {
@@ -63,7 +64,7 @@ if (moduleName) {
             };
         }
     } else {
-        alert("Module not found or empty! Reverting to default dataset.");
+        console.log("Module empty. Reverting to classic default dataset.");
     }
 }
 
