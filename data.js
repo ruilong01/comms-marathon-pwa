@@ -60,6 +60,18 @@ const staticQuestions = [
     // --- MCQs ---
     {
         type: 'mcq',
+        prompt: 'The backbone network that connects the various APs are known as the _______ System.',
+        options: [
+            'Distributed',
+            'Basic',
+            'Service',
+            'MAC'
+        ],
+        correctIndex: 0,
+        explanation: 'In 802.11 Wireless LAN architecture, the backbone network physically connecting various Access Points (Basic Service Sets) together is known as the Distributed System (DS).'
+    },
+    {
+        type: 'mcq',
         prompt: 'Which OSI Model Layer is explicitly responsible for end-to-end reliability, establishing connections, and ensuring packets arrive perfectly intact across the network?',
         options: [
             'Layer 2: Data Link Layer',
