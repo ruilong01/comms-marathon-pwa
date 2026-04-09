@@ -36,9 +36,19 @@ async function generateChapterContent(text, apiKey, chapterName) {
     const prompt = `You are a university professor creating interactive study material for the chapter: "${chapterName}".
 Given the following tutorial document, extract the key knowledge into a short HTML study guide, and then generate 5-10 rigorous quiz questions (MCQ and Fill-in-the-blank).
 
+IMPORTANT VISUAL DESIGN RULES:
+You MUST format the "summary" HTML using our specific beautiful CSS design system. Use these structures:
+1. Wrap related concepts in grids: <div class="two-col"> or <div class="three-col">
+2. Concept blocks: <div class="concept-card accent-blue"><div class="concept-icon">💡</div><h3>Title</h3><p>desc</p><div class="tag-row"><span class="tag">tag1</span><span class="tag warn">tag2</span></div></div>  (You can use accent-blue, accent-red, or accent-purple)
+3. Highlights/Warnings: <div class="highlight-card red-hl"><div class="highlight-icon">⚠️</div><div><h3>Careful!</h3><p>...</p></div></div>
+4. General information: <div class="info-card accent-purple">...</div>
+5. Lists: <ul class="kb-list"><li>...</li></ul>
+6. Formulas or rules: <div class="formula-box blue">...</div>
+7. Examples inside cards: <div class="example-box">...</div>
+
 Respond EXACTLY with this raw JSON object schema:
 {
-  "summary": "<h2>Chapter Title</h2><p>Provide a beautifully formatted, highly compressed HTML summary using <strong>bolding</strong> and <ul><li>lists</li></ul> for the most critical facts.</p>",
+  "summary": "<!-- 100% beautiful raw HTML utilizing the aforementioned classes -->...",
   "questions": [
     {
       "type": "mcq",
@@ -116,7 +126,15 @@ async function generateOverallSummary(chaptersArr, apiKey) {
 
     const prompt = `You are an academic planner drafting an overarching "Master Course Plan" for a module.
 Given the following chapters that exist in this module, write a comprehensive, cohesive, and encouraging HTML study plan (about 3-4 paragraphs) that describes how all these pieces fit together. 
-Use aesthetic semantic HTML (like <h3>, <p>, <div class="highlight">, <ul>). Do NOT use markdown code blocks (\`\`\`). JUST output raw HTML.
+
+IMPORTANT VISUAL DESIGN RULES:
+You MUST format your ONLY output in raw HTML using our specific beautiful CSS design system. Use these structures instead of generic tags:
+1. Concept blocks: <div class="concept-card accent-blue"><div class="concept-icon">💡</div><h3>Title</h3><p>desc</p></div>  (You can use accent-blue, accent-red, or accent-purple)
+2. Highlights/Warnings: <div class="highlight-card red-hl"><div class="highlight-icon">⚠️</div><div><h3>Careful!</h3><p>...</p></div></div>
+3. General information: <div class="info-card accent-purple">...</div>
+4. Lists: <ul class="kb-list"><li>...</li></ul>
+
+Do NOT use markdown code blocks (\`\`\`). JUST output the raw HTML exactly.
 
 CHAPTERS IN MODULE:
 ${context}
@@ -162,7 +180,14 @@ async function evaluatePerformance(missedQs, apiKey) {
     const prompt = `You are an encouraging AI academic evaluator.
 Analyze the following list of questions that the student has answered incorrectly during their study sessions.
 Identify their core weaknesses, overarching blind spots in the syllabus, and suggest exactly what they should study to fix this.
-Return your response formatted purely in aesthetic HTML (e.g. <h3>, <ul>, <p>, <strong>, etc.) without markdown.
+
+IMPORTANT VISUAL DESIGN RULES:
+You MUST format your ONLY output in raw HTML using our specific beautiful CSS design system. Use these structures instead of generic markdown:
+1. Concept blocks: <div class="concept-card accent-red"><div class="concept-icon">🎯</div><h3>Weakness Title</h3><p>desc</p></div>
+2. General information/Advice: <div class="info-card accent-purple">...</div>
+3. Lists: <ul class="kb-list"><li>...</li></ul>
+
+Do NOT use markdown code blocks (\`\`\`). JUST output the raw HTML exactly.
 
 ${context}`;
 
@@ -176,7 +201,15 @@ ${context}`;
 async function generateExamAnalysis(pastPaperText, apiKey) {
     const prompt = `You are an expert examiner. Read the following raw text from a university past year paper.
 Identify the recurring themes, what topics the examiners heavily favor, and any trick questions they tend to employ.
-Return your response purely in beautiful, structural HTML (e.g. <h3>, <ul>, <li>, <strong>, etc.) without any surrounding markdown blocks.
+
+IMPORTANT VISUAL DESIGN RULES:
+You MUST format your ONLY output in raw HTML using our specific beautiful CSS design system. Use these structures instead of generic markdown:
+1. Trend blocks: <div class="concept-card accent-blue"><div class="concept-icon">📈</div><h3>Trend Title</h3><p>desc</p></div>
+2. Trick Warnings: <div class="highlight-card red-hl"><div class="highlight-icon">⚠️</div><div><h3>Trick Question Trap</h3><p>...</p></div></div>
+3. General analysis: <div class="info-card accent-purple">...</div>
+4. Lists: <ul class="kb-list"><li>...</li></ul>
+
+Do NOT use markdown code blocks (\`\`\`). JUST output the raw HTML exactly.
 
 PAST PAPER TEXT:
 ${pastPaperText.substring(0, 40000)}
