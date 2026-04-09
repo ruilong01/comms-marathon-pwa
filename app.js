@@ -29,6 +29,15 @@ if (moduleName) {
     document.title = moduleName + " - Endless Marathon";
     const titleEl = document.getElementById('quiz-title');
     if (titleEl) titleEl.innerText = moduleName;
+    
+    // Reroute the knowledge base button
+    const kbBtn = document.getElementById('knowledge-btn');
+    if (kbBtn) {
+        let kbUrl = `dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}`;
+        if (requestedChapter) kbUrl += `&chapter=${encodeURIComponent(requestedChapter)}`;
+        if (requestedChapters) kbUrl += `&chapters=${encodeURIComponent(requestedChapters.join(','))}`;
+        kbBtn.href = kbUrl;
+    }
 
     // Load from local storage
     const modulesStr = localStorage.getItem('dynamic_modules') || '[]';
