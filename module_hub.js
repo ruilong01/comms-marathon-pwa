@@ -142,7 +142,10 @@ function renderHub() {
             const card = document.createElement('div');
             card.className = 'item-card chapter-card';
             card.innerHTML = `
-                <h4>📚 ${chap.name}</h4>
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <h4>📚 ${chap.name}</h4>
+                    <button class="delete-btn" onclick="deleteChapter(event, '${chap.name.replace(/'/g, "\\'")}')">🗑️</button>
+                </div>
                 <p style="margin-bottom:10px;">${chap.questions.length} Practice Questions</p>
                 <div style="display:flex; gap:10px;">
                     <a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>
@@ -161,7 +164,10 @@ function renderHub() {
             card.className = 'item-card exam-card';
             card.style.borderColor = "rgba(168, 85, 247, 0.3)";
             card.innerHTML = `
-                <h4>📝 ${ex.title || ex.name}</h4>
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <h4>📝 ${ex.title || ex.name}</h4>
+                    <button class="delete-btn" onclick="deleteExam(event, '${ex.name.replace(/'/g, "\\'")}')">🗑️</button>
+                </div>
                 <p style="margin-bottom:10px;">AI Simulated Final Paper</p>
                 <a href="exam_paper.html?module=${encodeURIComponent(moduleName)}&exam=${encodeURIComponent(ex.name)}" class="mock-btn" style="text-align: center; text-decoration: none;">Attempt Mock Paper</a>
                 ${ex.analysis ? `<button class="mock-btn view-analysis-btn" data-exam="${encodeURIComponent(ex.name)}" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color:#a855f7; margin-top:5px;">🧠 View Analysis</button>` : ''}
@@ -321,5 +327,28 @@ function showLoading(title, desc) {
 function hideLoading() {
     loadingModal.classList.remove('active');
 }
+
+// -- Deletion Handlers --
+window.deleteChapter = function(e, name) {
+    e.preventDefault();
+    e.stopPropagation();
+    if(confirm(`Are you sure you want to delete chapter "${name}"?`)) {
+        const mod = getModule();
+        mod.chapters = mod.chapters.filter(c => c.name !== name);
+        saveModule(mod);
+        renderHub();
+    }
+};
+
+window.deleteExam = function(e, name) {
+    e.preventDefault();
+    e.stopPropagation();
+    if(confirm(`Are you sure you want to delete exam "${name}"?`)) {
+        const mod = getModule();
+        mod.exams = mod.exams.filter(ex => ex.name !== name);
+        saveModule(mod);
+        renderHub();
+    }
+};
 
 window.onload = init;
