@@ -3,7 +3,7 @@
  * Handles securely calling the Gemini API for Chapters, Mock Exams, and Overviews.
  */
 
-async function callGemini(systemPrompt, apiKey, requireJSON = true) {
+async function callGemini(systemPrompt, apiKey, requireJSON = true, onRetry = null) {
     if (!apiKey) throw new Error("No API key provided. Please configure it in settings.");
 
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
@@ -11,28 +11,39 @@ async function callGemini(systemPrompt, apiKey, requireJSON = true) {
     const config = { temperature: 0.2 };
     if (requireJSON) config.responseMimeType = "application/json";
 
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            contents: [{ parts: [{text: systemPrompt}] }],
-            generationConfig: config
-        })
-    });
+    let retries = 5;
+    let baseDelay = 15000; // 15 seconds
 
-    if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`API Error ${response.status}: ${err}`);
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{text: systemPrompt}] }],
+                generationConfig: config
+            })
+        });
+
+        if (!response.ok) {
+            if (response.status === 429 && attempt < retries) {
+                const waitTime = baseDelay * attempt; 
+                if (onRetry) onRetry(`API Quota (429). Retrying in ${waitTime/1000}s...`);
+                await new Promise(r => setTimeout(r, waitTime));
+                continue;
+            }
+            const err = await response.text();
+            throw new Error(`API Error ${response.status}: ${err}`);
+        }
+
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
     }
-
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
 }
 
 // ----------------------------------------------------
 // 1. GENERATE CHAPTER (Questions + Summary)
 // ----------------------------------------------------
-async function generateChapterContent(text, apiKey, chapterName) {
+async function generateChapterContent(text, apiKey, chapterName, onRetry = null) {
     const prompt = `You are a university professor creating interactive study material for the chapter: "${chapterName}".
 Given the following tutorial document, extract the key knowledge into a short HTML study guide, and then generate 5-10 rigorous quiz questions (MCQ and Fill-in-the-blank).
 
@@ -79,14 +90,14 @@ SOURCE TEXT:
 ${text.substring(0, 30000)}
 `;
     
-    const rawParams = await callGemini(prompt, apiKey, true);
+    const rawParams = await callGemini(prompt, apiKey, true, onRetry);
     return JSON.parse(rawParams.trim());
 }
 
 // ----------------------------------------------------
 // 2. GENERATE MOCK EXAM
 // ----------------------------------------------------
-async function generateMockExam(pastPaperText, apiKey) {
+async function generateMockExam(pastPaperText, apiKey, onRetry = null) {
     const prompt = `You are a brilliant exam coordinator. I am providing you with a raw text extraction of a Past Year Final Exam Paper.
 Your job is to reverse-engineer its layout, difficulty, and topics, and invent a COMPLETELY NEW, ORIGINAL "Mock Exam" that mimics the exact format.
 You must invent entirely original questions testing the same syllabus, and provide a comprehensive Answer Key.
@@ -128,7 +139,7 @@ ${pastPaperText.substring(0, 40000)}
 // ----------------------------------------------------
 // 3. GENERATE OVERALL MODULE SUMMARY
 // ----------------------------------------------------
-async function generateOverallSummary(chaptersArr, apiKey) {
+async function generateOverallSummary(chaptersArr, apiKey, onRetry = null) {
     if(!chaptersArr || chaptersArr.length === 0) return "<p>No chapters uploaded yet.</p>";
 
     let context = chaptersArr.map(c => `Chapter: ${c.name}\nContent Hints:\n${c.summary.substring(0, 15000)}...`).join('\n\n');
@@ -153,14 +164,14 @@ CHAPTERS IN MODULE:
 ${context}
 `;
 // We don't strictly require JSON for this, just raw HTML string
-    const rawHtml = await callGemini(prompt, apiKey, false);
+    const rawHtml = await callGemini(prompt, apiKey, false, onRetry);
     return rawHtml.trim();
 }
 
 // ----------------------------------------------------
 // 4. CHAT WITH TUTOR
 // ----------------------------------------------------
-async function chatWithTutor(message, apiKey, context) {
+async function chatWithTutor(message, apiKey, context, onRetry = null) {
     const prompt = `You are a helpful AI Assistant embedded inside a personal study app.
 A student is asking you a question about the material. Provide a direct, comprehensive, and highly specific answer to their question. 
 Since this is for their own personal study, do not hold back or "guide" them to the answer—just give them the direct explanation or solution they are looking for.
@@ -174,14 +185,14 @@ ${message}
 `;
 
     // Standard string response, no JSON constraint needed
-    const rawParams = await callGemini(prompt, apiKey, false);
+    const rawParams = await callGemini(prompt, apiKey, false, onRetry);
     return rawParams.trim();
 }
 
 // ----------------------------------------------------
 // 5. EVALUATE PERFORMANCE
 // ----------------------------------------------------
-async function evaluatePerformance(missedQs, apiKey) {
+async function evaluatePerformance(missedQs, apiKey, onRetry = null) {
     if(!missedQs || missedQs.length === 0) {
         return "<p>You haven't answered any questions incorrectly yet! Take some quizzes first.</p>";
     }
@@ -204,14 +215,14 @@ Do NOT use markdown code blocks (\`\`\`). JUST output the raw HTML exactly.
 
 ${context}`;
 
-    const rawHtml = await callGemini(prompt, apiKey, false);
+    const rawHtml = await callGemini(prompt, apiKey, false, onRetry);
     return rawHtml.trim();
 }
 
 // ----------------------------------------------------
 // 6. GENERATE EXAM ANALYSIS
 // ----------------------------------------------------
-async function generateExamAnalysis(pastPaperText, apiKey) {
+async function generateExamAnalysis(pastPaperText, apiKey, onRetry = null) {
     const prompt = `You are an expert examiner. Read the following raw text from a university past year paper.
 Identify the recurring themes, what topics the examiners heavily favor, and any trick questions they tend to employ.
 
@@ -228,6 +239,6 @@ PAST PAPER TEXT:
 ${pastPaperText.substring(0, 40000)}
 `;
 
-    const rawHtml = await callGemini(prompt, apiKey, false);
+    const rawHtml = await callGemini(prompt, apiKey, false, onRetry);
     return rawHtml.trim();
 }

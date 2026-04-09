@@ -186,16 +186,10 @@ function renderHub() {
                     <h4 style="margin:0; overflow-wrap:anywhere; line-height:1.4;">📚 ${chap.name}</h4>
                     <button class="delete-btn" onclick="deleteChapter(event, '${chap.id}')" title="Delete Chapter">🗑️</button>
                 </div>
-                <p style="margin-top:10px; margin-bottom:10px;">${chap.isAIEnhanced === false ? 'Default Classic Questions' : chap.questions.length + ' AI Questions'}</p>
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <div style="display:flex; gap:10px;">
-                        <a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>
-                        <a href="dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 Know</a>
-                    </div>
-                    ${chap.isAIEnhanced === false 
-                        ? `<button class="mock-btn" onclick="enhanceChapter(event, '${chap.id}')" style="width:100%; border-color: #00c3ff; color: #00c3ff; font-weight: bold; background: rgba(0, 195, 255, 0.1);">✨ Enhance (AI)</button>` 
-                        : ''
-                    }
+                <p style="margin-top:10px; margin-bottom:10px;">${chap.questions ? chap.questions.length : 0} AI Questions</p>
+                <div style="display:flex; gap:10px;">
+                    <a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>
+                    <a href="dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 Know</a>
                 </div>
             `;
             chaptersList.insertBefore(card, dzChapter);
@@ -218,12 +212,9 @@ function renderHub() {
                     <h4 style="margin:0; overflow-wrap:anywhere; line-height:1.4;">📝 ${ex.title || ex.name}</h4>
                     <button class="delete-btn" onclick="deleteExam(event, '${ex.id}')" title="Delete Exam">🗑️</button>
                 </div>
-                <p style="margin-top:10px; margin-bottom:10px;">${ex.isAIEnhanced === false ? 'Raw Past Paper File' : 'AI Simulated Final Paper'}</p>
-                ${ex.isAIEnhanced === false
-                    ? `<button class="mock-btn" onclick="enhanceExam(event, '${ex.id}')" style="width: 100%; border-color: #00c3ff; color: #00c3ff; font-weight: bold;">✨ Generate AI Mock Exam</button>`
-                    : `<a href="exam_paper.html?module=${encodeURIComponent(moduleName)}&exam=${encodeURIComponent(ex.name)}" class="mock-btn" style="text-align: center; text-decoration: none; display: block; margin-bottom: 5px;">Attempt Mock Paper</a>
-                       ${ex.analysis ? `<button class="mock-btn view-analysis-btn" data-exam="${encodeURIComponent(ex.name)}" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color:#a855f7; width: 100%;">🧠 View Analysis</button>` : ''}`
-                }
+                <p style="margin-top:10px; margin-bottom:10px;">AI Simulated Final Paper</p>
+                <a href="exam_paper.html?module=${encodeURIComponent(moduleName)}&exam=${encodeURIComponent(ex.name)}" class="mock-btn" style="text-align: center; text-decoration: none; display: block; margin-bottom: 5px;">Attempt Mock Paper</a>
+                ${ex.analysis ? `<button class="mock-btn view-analysis-btn" data-exam="${encodeURIComponent(ex.name)}" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color:#a855f7; width: 100%;">🧠 View Analysis</button>` : ''}
             `;
             examsList.insertBefore(card, dzExam);
             
@@ -313,11 +304,14 @@ async function handleChapterUpload(file) {
         return;
     }
 
-    const task = createQueueItem(`Parsing: ${cleanName}`);
+    const task = createQueueItem(`Chapter: ${cleanName}`);
     
     try {
         task.setStatus("Extracting PDF text locally...", false);
         const text = await extractText(file);
+
+        task.setStatus("AI drafting guide & rigourous MCQs...", false);
+        const chapterData = await generateChapterContent(text, key, cleanName, (msg) => task.setStatus(msg, false));
 
         // Save
         const mod = getModule(); // Re-fetch to avoid race conditions
@@ -325,10 +319,8 @@ async function handleChapterUpload(file) {
         mod.chapters.push({
             id: 'chap-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9),
             name: cleanName,
-            rawText: text,
-            isAIEnhanced: false,
-            summary: `<div class="info-card accent-purple"><p style="color:#b0bdc8; line-height: 1.6;">This chapter has not been processed by Gemini yet. Click "✨ Enhance (AI)" in the Hub to extract a massive Final Exam Cheat Sheet and generate interactive Mock Questions from this text block.</p></div>`,
-            questions: []
+            summary: chapterData.summary,
+            questions: chapterData.questions
         });
 
         saveModule(mod);
@@ -353,23 +345,25 @@ async function handleExamUpload(file) {
         return;
     }
 
-    const task = createQueueItem(`Parsing Exam: ${cleanName}`);
+    const task = createQueueItem(`Exam: ${cleanName}`);
     
     try {
-        task.setStatus("Extracting PDF text locally...", false);
+        task.setStatus("Extracting paper structure & topics...", false);
         const text = await extractText(file);
+
+        task.setStatus("Extracting Examiner Patterns...", false);
+        const analysisData = await generateExamAnalysis(text, key, (msg) => task.setStatus(msg, false));
+
+        task.setStatus("Simulating Mock (takes ~30s)...", false);
+        const mockData = await generateMockExam(text, key, (msg) => task.setStatus(msg, false));
+        
+        mockData.id = 'exam-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
+        mockData.name = `AI Mock: ${cleanName}`;
+        mockData.analysis = analysisData;
 
         const mod = getModule(); // Re-fetch
         if(!mod.exams) mod.exams = [];
-        mod.exams.push({
-            id: 'exam-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9),
-            name: cleanName,
-            title: `Unprocessed Paper: ${cleanName}`,
-            rawText: text,
-            isAIEnhanced: false,
-            questions: [],
-            answers: []
-        });
+        mod.exams.push(mockData);
 
         saveModule(mod);
         
@@ -441,73 +435,6 @@ window.deleteExam = function(e, id) {
         mod.exams = mod.exams.filter(ex => ex.id !== id);
         saveModule(mod);
         renderHub();
-    }
-};
-
-window.enhanceChapter = async function(e, id) {
-    e.preventDefault();
-    const key = localStorage.getItem('GEMINI_API_KEY');
-    if(!key) { alert("Missing API Key in Settings."); return; }
-    
-    const mod = getModule();
-    const chap = mod.chapters.find(c => c.id === id);
-    if(!chap) return;
-
-    const task = createQueueItem(`Enhancing: ${chap.name}`);
-    try {
-        task.setStatus("Forwarding raw text to Gemini...", false);
-        const chapterData = await generateChapterContent(chap.rawText, key, chap.name);
-
-        const activeMod = getModule(); // Re-fetch to avoid race
-        const activeChap = activeMod.chapters.find(c => c.id === id);
-        if(!activeChap) return;
-        
-        activeChap.summary = chapterData.summary;
-        activeChap.questions = chapterData.questions;
-        activeChap.isAIEnhanced = true;
-
-        saveModule(activeMod);
-        renderHub();
-        task.complete();
-    } catch(err) {
-        task.setStatus(`Failed: ${err.message}`, true);
-        setTimeout(() => task.complete(true), 5000);
-    }
-};
-
-window.enhanceExam = async function(e, id) {
-    e.preventDefault();
-    const key = localStorage.getItem('GEMINI_API_KEY');
-    if(!key) { alert("Missing API Key in Settings."); return; }
-    
-    const mod = getModule();
-    const ex = mod.exams.find(c => c.id === id);
-    if(!ex) return;
-
-    const task = createQueueItem(`Enhancing: ${ex.name}`);
-    try {
-        task.setStatus("Extracting Examiner Patterns...", false);
-        const analysisData = await generateExamAnalysis(ex.rawText, key);
-
-        task.setStatus("Simulating Original Mock (takes ~30s)...", false);
-        const mockData = await generateMockExam(ex.rawText, key);
-
-        const activeMod = getModule(); // Re-fetch
-        const activeEx = activeMod.exams.find(c => c.id === id);
-        if(!activeEx) return;
-        
-        activeEx.title = `AI Mock: ${ex.name}`;
-        activeEx.analysis = analysisData;
-        activeEx.questions = mockData.questions;
-        activeEx.answers = mockData.answers;
-        activeEx.isAIEnhanced = true;
-
-        saveModule(activeMod);
-        renderHub();
-        task.complete();
-    } catch(err) {
-        task.setStatus(`Failed: ${err.message}`, true);
-        setTimeout(() => task.complete(true), 5000);
     }
 };
 
