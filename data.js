@@ -60,6 +60,54 @@ const staticQuestions = [
     // --- MCQs ---
     {
         type: 'mcq',
+        prompt: 'Transmission during the Contention Free Period (CFP) is controlled by the _______ residing in the AP.',
+        options: [
+            'window size',
+            'Point Coordinator',
+            'algorithm',
+            'contention window'
+        ],
+        correctIndex: 1,
+        explanation: 'During the Contention Free Period (CFP), the Contention-free Point Coordination Function (PCF) temporarily takes over. A central Point Coordinator (PC), which physically resides inside the Access Point, dictates exactly who can speak and when, entirely eliminating collisions.'
+    },
+    {
+        type: 'mcq',
+        prompt: 'There are _______ MAC address fields in an 802.11 data frame.',
+        options: [
+            '4',
+            '8',
+            '12',
+            '16'
+        ],
+        correctIndex: 0,
+        explanation: 'Unlike a wired 802.3 Ethernet frame which only possesses 2 MAC addresses (Source and Destination), an 802.11 WLAN frame possesses exactly 4 MAC address fields: Transmitter, Receiver, Source, and Destination!'
+    },
+    {
+        type: 'mcq',
+        prompt: 'The CRC in 802.11 frame provides error control for the frame header and _______.',
+        options: [
+            'MAC header',
+            'CRC',
+            'frame body',
+            'address'
+        ],
+        correctIndex: 2,
+        explanation: 'The standard Frame Check Sequence (FCS) contains a 32-bit CRC that physically protects the integrity of the ENTIRE frame. It rigorously error-checks both the MAC header and the encapsulated Frame Body (payload).'
+    },
+    {
+        type: 'mcq',
+        prompt: '_______ frames only contains the Destination Address (DA) filed but not the Source Address (SA) field.',
+        options: [
+            'DS and NIC',
+            'AP and SSID',
+            'CTS and ACK',
+            'DCF and PCF'
+        ],
+        correctIndex: 2,
+        explanation: 'Control frames like CTS (Clear To Send) and ACK (Acknowledgement) are incredibly short and fast. They do not waste bytes including a Source Address; they merely include the Target Destination Address to immediately tell a specific receiver to proceed or stop.'
+    },
+    {
+        type: 'mcq',
         prompt: 'The maximum data rate for IEEE 802.11a is _____ Mbps while that for 802.11b is _____ Mbps.',
         options: [
             '11, 54',
