@@ -47,6 +47,108 @@ const staticQuestions = [
     // --- MCQs ---
     {
         type: 'mcq',
+        prompt: `Pole zero plot: (unit circle is shown)<br>
+<svg viewBox="-1.5 -1.5 3 3" width="120" height="120" style="background:#fff; padding:10px; border-radius:8px; margin-top:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <circle cx="0" cy="0" r="1" fill="none" stroke="#555" stroke-width="0.04"/>
+    <circle cx="0.5" cy="-0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="-0.5" cy="-0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.5" cy="0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="-0.5" cy="0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0" cy="-1" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0" cy="1" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+</svg><br>What type of filter is this?`,
+        options: [
+            'The filter is IIR.',
+            'The filter is FIR.',
+            'The filter is Analog.',
+            'The filter is unstable.'
+        ],
+        correctIndex: 1,
+        explanation: 'Because there are absolutely no explicit poles plotted (except inherently at the origin for causality), this filter possesses no feedback mathematically. Thus, it is purely an FIR (Finite Impulse Response) filter!'
+    },
+    {
+        type: 'mcq',
+        prompt: `Pole zero plot: (unit circle is shown)<br>
+<svg viewBox="-1.5 -1.5 3 3" width="120" height="120" style="background:#fff; padding:10px; border-radius:8px; margin-top:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <circle cx="0" cy="0" r="1" fill="none" stroke="#555" stroke-width="0.04"/>
+    <circle cx="0.5" cy="-0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="-0.5" cy="-0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.5" cy="0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="-0.5" cy="0.866" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0" cy="-1" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0" cy="1" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+</svg><br>Identify the coefficient property of this filter:`,
+        options: [
+            'The filter has real coefficients.',
+            'The filter does NOT have real coefficients.',
+            'The filter has only imaginary coefficients.',
+            'The filter coefficients are infinitely repeating.'
+        ],
+        correctIndex: 0,
+        explanation: 'Look closely at the graphical layout! Every specific zero plotted in the upper-half complex plane has a perfect mirror-image reflection in the lower-half plane. Because they obey perfect Complex Conjugate Symmetry, the filter strictly possesses REAL coefficients.'
+    },
+    {
+        type: 'mcq',
+        prompt: `Pole zero plot:<br>
+<svg viewBox="-1.5 -1.5 3 3" width="120" height="120" style="background:#fff; padding:10px; border-radius:8px; margin-top:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <circle cx="0" cy="0" r="1" fill="none" stroke="#555" stroke-width="0.04"/>
+    <circle cx="0.4" cy="-0.6" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.4" cy="0.6" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.4" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="1" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="1.4" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+</svg><br>Estimate the frequency response type of this filter:`,
+        options: [
+            'The filter is allpass',
+            'The filter is not allpass (we may guess it is a lowpass)',
+            'The filter is not allpass (we may guess it is a highpass)',
+            'The filter is not allpass (we may guess it is a bandpass)'
+        ],
+        correctIndex: 2,
+        explanation: 'A zero dictates where the filter forcefully blocks frequencies. Notice there is a zero situated exactly at z = 1 (the far right edge of the unit circle). This point perfectly corresponds to ω = 0 (DC / low frequencies). A filter that blocks DC is explicitly a highpass filter!'
+    },
+    {
+        type: 'mcq',
+        prompt: `Pole zero plot:<br>
+<svg viewBox="-1.5 -1.5 3 3" width="120" height="120" style="background:#fff; padding:10px; border-radius:8px; margin-top:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <circle cx="0" cy="0" r="1" fill="none" stroke="#555" stroke-width="0.04"/>
+    <circle cx="0.4" cy="-0.6" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.4" cy="0.6" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.4" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="1" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="1.4" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+</svg><br>Identify the phase characteristics:`,
+        options: [
+            'The filter is linear phase',
+            'The filter is minimum phase',
+            'The filter is maximum phase',
+            'The filter is none of these'
+        ],
+        correctIndex: 3,
+        explanation: 'It is NOT minimum phase because an offending zero exists outside the unit circle (at 1.4). It is NOT maximum phase because zeros exist inside. It is NOT linear phase because the linear-phase reciprocal symmetry constraint (mapping pair z0 and 1/z0) is utterly violated. Hence, none of these.'
+    },
+    {
+        type: 'mcq',
+        prompt: `Pole zero plot:<br>
+<svg viewBox="-1.5 -1.5 3 3" width="120" height="120" style="background:#fff; padding:10px; border-radius:8px; margin-top:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    <circle cx="0" cy="0" r="1" fill="none" stroke="#555" stroke-width="0.04"/>
+    <circle cx="0.4" cy="-0.6" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.4" cy="0.6" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="0.4" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="1" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+    <circle cx="1.4" cy="0" r="0.08" fill="none" stroke="#ff3366" stroke-width="0.06"/>
+</svg><br>Assess the physical stability of this system:`,
+        options: [
+            'The filter is (causal) stable',
+            'The filter is (causal) unstable',
+            'The filter is marginally stable',
+            'The filter oscillates to infinity'
+        ],
+        correctIndex: 0,
+        explanation: 'Examiner Trap! Stability is determined EXCLUSIVELY by the graphical placement of the POLES (which dictate the feedback loop!). Even though a zero resides aggressively outside the unit circle, the zeros only affect feed-forward paths. Since there are strictly no poles outside the unit circle, the FIR filter is inherently stable.'
+    },
+    {
+        type: 'mcq',
         prompt: 'Which mathematical condition dictates if a Discrete-Time sinusoid is perfectly periodic?',
         options: [
             'Its amplitude must strictly not exceed 1.',
