@@ -138,13 +138,18 @@ function renderHub() {
     // Render Chapters
     document.querySelectorAll('.chapter-card').forEach(c => c.remove());
     if (mod.chapters) {
-        mod.chapters.forEach(chap => {
+        // Natural intelligent sort by filename (e.g. Chapter 1, Chapter 2, Chapter 10)
+        mod.chapters.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+        
+        mod.chapters.forEach((chap, index) => {
+            if(!chap.id) chap.id = `chap-${index}-${Date.now()}`; // Retro-fit ID for older entries
+            
             const card = document.createElement('div');
             card.className = 'item-card chapter-card';
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:start;">
                     <h4>📚 ${chap.name}</h4>
-                    <button class="delete-btn" onclick="deleteChapter(event, '${chap.name.replace(/'/g, "\\'")}')">🗑️</button>
+                    <button class="delete-btn" onclick="deleteChapter(event, '${chap.id}')">🗑️</button>
                 </div>
                 <p style="margin-bottom:10px;">${chap.questions.length} Practice Questions</p>
                 <div style="display:flex; gap:10px;">
@@ -159,14 +164,18 @@ function renderHub() {
     // Render Exams
     document.querySelectorAll('.exam-card').forEach(e => e.remove());
     if (mod.exams) {
-        mod.exams.forEach(ex => {
+        mod.exams.sort((a, b) => (a.title || a.name).localeCompare((b.title || b.name), undefined, { numeric: true, sensitivity: 'base' }));
+        
+        mod.exams.forEach((ex, index) => {
+            if(!ex.id) ex.id = `exam-${index}-${Date.now()}`; // Retro-fit ID for older entries
+            
             const card = document.createElement('div');
             card.className = 'item-card exam-card';
             card.style.borderColor = "rgba(168, 85, 247, 0.3)";
             card.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:start;">
                     <h4>📝 ${ex.title || ex.name}</h4>
-                    <button class="delete-btn" onclick="deleteExam(event, '${ex.name.replace(/'/g, "\\'")}')">🗑️</button>
+                    <button class="delete-btn" onclick="deleteExam(event, '${ex.id}')">🗑️</button>
                 </div>
                 <p style="margin-bottom:10px;">AI Simulated Final Paper</p>
                 <a href="exam_paper.html?module=${encodeURIComponent(moduleName)}&exam=${encodeURIComponent(ex.name)}" class="mock-btn" style="text-align: center; text-decoration: none;">Attempt Mock Paper</a>
@@ -264,6 +273,7 @@ async function handleChapterUpload(file) {
         const mod = getModule();
         if(!mod.chapters) mod.chapters = [];
         mod.chapters.push({
+            id: 'chap-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9),
             name: cleanName,
             summary: chapterData.summary,
             questions: chapterData.questions
@@ -301,6 +311,7 @@ async function handleExamUpload(file) {
 
         showLoading("Simulating Mock Exam...", "The AI is inventing totally original scenarios mirroring the exact format. This usually takes 30-40s.");
         const mockData = await generateMockExam(text, key);
+        mockData.id = 'exam-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
         mockData.name = `AI Mock: ${cleanName}`; // Internal ID
         mockData.analysis = analysisData; // Store the analysis alongside
 
@@ -329,23 +340,23 @@ function hideLoading() {
 }
 
 // -- Deletion Handlers --
-window.deleteChapter = function(e, name) {
+window.deleteChapter = function(e, id) {
     e.preventDefault();
     e.stopPropagation();
-    if(confirm(`Are you sure you want to delete chapter "${name}"?`)) {
+    if(confirm(`Are you sure you want to delete this chapter?`)) {
         const mod = getModule();
-        mod.chapters = mod.chapters.filter(c => c.name !== name);
+        mod.chapters = mod.chapters.filter(c => c.id !== id);
         saveModule(mod);
         renderHub();
     }
 };
 
-window.deleteExam = function(e, name) {
+window.deleteExam = function(e, id) {
     e.preventDefault();
     e.stopPropagation();
-    if(confirm(`Are you sure you want to delete exam "${name}"?`)) {
+    if(confirm(`Are you sure you want to delete this exam?`)) {
         const mod = getModule();
-        mod.exams = mod.exams.filter(ex => ex.name !== name);
+        mod.exams = mod.exams.filter(ex => ex.id !== id);
         saveModule(mod);
         renderHub();
     }
