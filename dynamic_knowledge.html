@@ -51,12 +51,19 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const moduleName = urlParams.get('module');
+        const reqChapter = urlParams.get('chapter');
+        const reqChapters = urlParams.get('chapters') ? urlParams.get('chapters').split(',') : null;
         
         document.getElementById('back-link').href = moduleName ? `module_hub.html?module=${encodeURIComponent(moduleName)}` : 'index.html';
         if(moduleName) {
             document.getElementById('kb-nav-title').innerText = "📚 " + moduleName;
-            document.getElementById('kb-title').innerText = moduleName + " Overview";
-            document.title = moduleName + " - Knowledge Base";
+            
+            let titleStr = moduleName + " Overview";
+            if (reqChapter) titleStr = reqChapter + " Notes";
+            else if (reqChapters) titleStr = "Combined Notes";
+            
+            document.getElementById('kb-title').innerText = titleStr;
+            document.title = titleStr + " - Knowledge Base";
         }
 
         function renderDynamicKnowledge() {
@@ -65,23 +72,31 @@
             if(!mod) return;
 
             const contentMount = document.getElementById('dynamic-content-mount');
-            if (mod.overallSummary) {
-                const section = document.createElement('section');
-                section.className = 'kb-section glass-card';
-                section.style.padding = '2rem';
-                section.innerHTML = `
-                    <h2 style="color:#a855f7; margin-bottom:1rem;">Module Master Plan</h2>
-                    <div style="line-height:1.6; color:#b0bdc8;">${mod.overallSummary}</div>
-                `;
-                contentMount.appendChild(section);
-            } else {
-                contentMount.innerHTML = '<p style="text-align:center; color:#a0a5ba; margin-top:20px;">No overall summary generated yet. Add more chapters to compile a Master Plan.</p>';
+            // Only show master plan if we are looking at the overall module (no specific chapters requested)
+            if (!reqChapter && !reqChapters) {
+                if (mod.overallSummary) {
+                    const section = document.createElement('section');
+                    section.className = 'kb-section glass-card';
+                    section.style.padding = '2rem';
+                    section.innerHTML = `
+                        <h2 style="color:#a855f7; margin-bottom:1rem;">Module Master Plan</h2>
+                        <div style="line-height:1.6; color:#b0bdc8;">${mod.overallSummary}</div>
+                    `;
+                    contentMount.appendChild(section);
+                } else {
+                    contentMount.innerHTML = '<p style="text-align:center; color:#a0a5ba; margin-top:20px;">No overall summary generated yet. Add more chapters to compile a Master Plan.</p>';
+                }
             }
 
             const chapMount = document.getElementById('chapters-mount');
             if (mod.chapters && mod.chapters.length > 0) {
                 mod.chapters.forEach(chap => {
                     if(!chap.summary) return;
+                    
+                    // Filter logic
+                    if(reqChapter && chap.name !== reqChapter) return;
+                    if(reqChapters && !reqChapters.includes(chap.name)) return;
+                    
                     const section = document.createElement('section');
                     section.className = 'kb-section';
                     section.innerHTML = `

@@ -41,6 +41,79 @@ function init() {
         window.location.href = `dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}`;
     });
 
+    // Combine Chapters Modal Logic
+    document.getElementById('btn-combine').addEventListener('click', (e) => {
+        e.preventDefault();
+        const mod = getModule();
+        const checklist = document.getElementById('combine-checklist');
+        checklist.innerHTML = '';
+        if(!mod.chapters || mod.chapters.length === 0) {
+            checklist.innerHTML = '<span style="color:#a0a5ba;">No chapters available.</span>';
+        } else {
+            mod.chapters.forEach(chap => {
+                const id = 'chk-' + btoa(encodeURIComponent(chap.name)).replace(/=/g, '');
+                checklist.innerHTML += `
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                        <input type="checkbox" id="${id}" value="${chap.name}" style="transform:scale(1.2);">
+                        <label for="${id}" style="color:#fff;">${chap.name}</label>
+                    </div>
+                `;
+            });
+        }
+        document.getElementById('combine-modal').classList.add('active');
+    });
+
+    document.getElementById('close-combine-btn').addEventListener('click', () => {
+        document.getElementById('combine-modal').classList.remove('active');
+    });
+
+    document.getElementById('combine-quiz-btn').addEventListener('click', () => {
+        const checked = Array.from(document.querySelectorAll('#combine-checklist input:checked')).map(cb => cb.value);
+        if(checked.length === 0) return alert("Select at least one chapter.");
+        window.location.href = `quiz.html?module=${encodeURIComponent(moduleName)}&chapters=${encodeURIComponent(checked.join(','))}`;
+    });
+
+    document.getElementById('combine-knowledge-btn').addEventListener('click', () => {
+        const checked = Array.from(document.querySelectorAll('#combine-checklist input:checked')).map(cb => cb.value);
+        if(checked.length === 0) return alert("Select at least one chapter.");
+        window.location.href = `dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapters=${encodeURIComponent(checked.join(','))}`;
+    });
+
+    // Evaluation Modal Logic
+    document.getElementById('btn-eval').addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('eval-modal').classList.add('active');
+    });
+    document.getElementById('close-eval-btn').addEventListener('click', () => {
+        document.getElementById('eval-modal').classList.remove('active');
+    });
+    document.getElementById('run-eval-btn').addEventListener('click', async () => {
+        const key = localStorage.getItem('GEMINI_API_KEY');
+        if(!key) return alert("Missing API Key in Settings.");
+        
+        let statsStats = JSON.parse(localStorage.getItem('user_stats') || '{}');
+        let missedQs = statsStats[moduleName] || [];
+        
+        const spinner = document.getElementById('eval-spinner');
+        const content = document.getElementById('eval-content');
+        
+        spinner.style.display = 'block';
+        content.innerHTML = '';
+        
+        try {
+            const htmlReport = await evaluatePerformance(missedQs, key);
+            content.innerHTML = htmlReport;
+        } catch(err) {
+            content.innerHTML = `<span style="color:#ff3366;">Error: ${err.message}</span>`;
+        }
+        spinner.style.display = 'none';
+    });
+
+    // Analysis logic
+    document.getElementById('close-analysis-btn').addEventListener('click', () => {
+        document.getElementById('analysis-modal').classList.remove('active');
+    });
+
     setupDropzone(dzChapter, fileChapter, handleChapterUpload);
     setupDropzone(dzExam, fileExam, handleExamUpload);
 }
@@ -70,7 +143,11 @@ function renderHub() {
             card.className = 'item-card chapter-card';
             card.innerHTML = `
                 <h4>📚 ${chap.name}</h4>
-                <p>${chap.questions.length} Practice Questions</p>
+                <p style="margin-bottom:10px;">${chap.questions.length} Practice Questions</p>
+                <div style="display:flex; gap:10px;">
+                    <a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>
+                    <a href="dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 Know</a>
+                </div>
             `;
             chaptersList.insertBefore(card, dzChapter);
         });
@@ -85,10 +162,22 @@ function renderHub() {
             card.style.borderColor = "rgba(168, 85, 247, 0.3)";
             card.innerHTML = `
                 <h4>📝 ${ex.title || ex.name}</h4>
-                <p>AI Simulated Final Paper</p>
+                <p style="margin-bottom:10px;">AI Simulated Final Paper</p>
                 <a href="exam_paper.html?module=${encodeURIComponent(moduleName)}&exam=${encodeURIComponent(ex.name)}" class="mock-btn" style="text-align: center; text-decoration: none;">Attempt Mock Paper</a>
+                ${ex.analysis ? `<button class="mock-btn view-analysis-btn" data-exam="${encodeURIComponent(ex.name)}" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color:#a855f7; margin-top:5px;">🧠 View Analysis</button>` : ''}
             `;
             examsList.insertBefore(card, dzExam);
+            
+            // Add listener for analysis button
+            setTimeout(() => {
+                const btn = card.querySelector('.view-analysis-btn');
+                if(btn) {
+                    btn.addEventListener('click', () => {
+                        document.getElementById('analysis-content').innerHTML = ex.analysis;
+                        document.getElementById('analysis-modal').classList.add('active');
+                    });
+                }
+            }, 0);
         });
     }
 }
@@ -103,11 +192,23 @@ function setupDropzone(dz, input, uploadHandler) {
     ['dragenter', 'dragover'].forEach(eName => dz.addEventListener(eName, () => dz.style.borderColor = '#ff3366'));
     ['dragleave', 'drop'].forEach(eName => dz.addEventListener(eName, () => dz.style.borderColor = ''));
 
-    dz.addEventListener('drop', e => {
-        if(e.dataTransfer.files.length) uploadHandler(e.dataTransfer.files[0]);
+    dz.addEventListener('drop', async e => {
+        const files = e.dataTransfer.files;
+        if(files.length) {
+            for(let i=0; i<files.length; i++) {
+                await uploadHandler(files[i]);
+            }
+            alert(`Finished processing ${files.length} file(s).`);
+        }
     });
-    input.addEventListener('change', e => {
-        if(e.target.files.length) uploadHandler(e.target.files[0]);
+    input.addEventListener('change', async e => {
+        const files = e.target.files;
+        if(files.length) {
+            for(let i=0; i<files.length; i++) {
+                await uploadHandler(files[i]);
+            }
+            alert(`Finished processing ${files.length} file(s).`);
+        }
         input.value = ''; // reset
     });
 }
@@ -172,11 +273,10 @@ async function handleChapterUpload(file) {
         saveModule(mod);
         renderHub();
         hideLoading();
-        alert(`Chapter "${cleanName}" imported successfully!`);
         
     } catch(err) {
         hideLoading();
-        alert(`Chapter Generation Failed: ${err.message}`);
+        alert(`Chapter "${cleanName}" Generation Failed: ${err.message}`);
     }
 }
 
@@ -190,9 +290,13 @@ async function handleExamUpload(file) {
         showLoading(`Analysing Past Paper...`, "Extracting paper structure, marks, and historical questions.");
         const text = await extractText(file);
 
+        showLoading("Extracting Examiner Patterns...", "The AI is determining what topics are heavily favored.");
+        const analysisData = await generateExamAnalysis(text, key);
+
         showLoading("Simulating Mock Exam...", "The AI is inventing totally original scenarios mirroring the exact format. This usually takes 30-40s.");
         const mockData = await generateMockExam(text, key);
         mockData.name = `AI Mock: ${cleanName}`; // Internal ID
+        mockData.analysis = analysisData; // Store the analysis alongside
 
         const mod = getModule();
         if(!mod.exams) mod.exams = [];
@@ -201,11 +305,10 @@ async function handleExamUpload(file) {
         
         renderHub();
         hideLoading();
-        alert(`Successfully generated a simulated exam!`);
 
     } catch(err) {
         hideLoading();
-        alert(`Exam Generation Failed: ${err.message}`);
+        alert(`Exam "${cleanName}" Generation Failed: ${err.message}`);
     }
 }
 

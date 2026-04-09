@@ -190,12 +190,18 @@
         </div>
 
         <!-- Major Study Actions -->
-        <div class="hub-actions">
+        <div class="hub-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <a href="#" class="big-action" id="btn-quiz">
-                <span>🎯</span> Play AI Quiz (All Chapters)
+                <span>🎯</span> Overall Quiz
             </a>
             <a href="#" class="big-action purple" id="btn-knowledge">
-                <span>📚</span> View Module Master-Plan
+                <span>📚</span> Overall Knowledge
+            </a>
+            <a href="#" class="big-action" id="btn-eval" style="background: rgba(255,51,102,0.1); border-color: rgba(255,51,102,0.3); color: #ff3366;">
+                <span>📊</span> Overall Evaluation
+            </a>
+            <a href="#" class="big-action" id="btn-combine" style="background: rgba(0, 230, 118, 0.1); border-color: rgba(0, 230, 118, 0.3); color: #00e676;">
+                <span>🔗</span> Combine Chapters
             </a>
         </div>
 
@@ -236,6 +242,48 @@
             <div class="spinner"></div>
             <h3 id="loading-title">Processing...</h3>
             <p id="loading-desc" style="color: #a0a5ba; font-size: 0.9rem;">AI is meticulously reading and compiling.</p>
+        </div>
+    </div>
+
+    <!-- Combine Modal -->
+    <div class="modal-overlay" id="combine-modal">
+        <div class="modal-card">
+            <h2 style="color: #00c3ff;">Combine Chapters</h2>
+            <p style="color: #a0a5ba; margin-bottom: 20px;">Select multiple chapters to create a focused session.</p>
+            <div id="combine-checklist" style="text-align: left; max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+                <!-- dynamic checkboxes -->
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="mock-btn" id="combine-quiz-btn" style="flex:1;">🎯 Start Quiz</button>
+                <button class="mock-btn" id="combine-knowledge-btn" style="flex:1; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 View Plan</button>
+            </div>
+            <button class="mock-btn" id="close-combine-btn" style="width: 100%; margin-top: 10px; background: transparent; color: #a0a5ba; border-color: rgba(255,255,255,0.2);">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Evaluation Modal -->
+    <div class="modal-overlay" id="eval-modal">
+        <div class="modal-card" style="max-width: 600px;">
+            <h2 style="color: #ff3366;">Performance Evaluation</h2>
+            <div class="spinner" id="eval-spinner" style="display: none;"></div>
+            <div id="eval-content" style="text-align: left; line-height: 1.6; color: #b0bdc8; margin-top: 20px; max-height: 400px; overflow-y: auto;">
+                Click "Run Evaluation" to generate AI insights based on your recent Quiz mistakes.
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="mock-btn" id="run-eval-btn" style="flex:1; background: rgba(255,51,102,0.1); border-color: rgba(255,51,102,0.3); color: #ff3366;">Run Evaluation</button>
+                <button class="mock-btn" id="close-eval-btn" style="flex:1; background: transparent; color: #a0a5ba; border-color: rgba(255,255,255,0.2);">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Modal -->
+    <div class="modal-overlay" id="analysis-modal">
+        <div class="modal-card" style="max-width: 700px;">
+            <h2 style="color: #a855f7;">Exam Analysis</h2>
+            <div id="analysis-content" style="text-align: left; line-height: 1.6; color: #b0bdc8; margin-top: 20px; max-height: 450px; overflow-y: auto;">
+                <!-- content injected -->
+            </div>
+            <button class="mock-btn" id="close-analysis-btn" style="width: 100%; margin-top: 20px; background: transparent; color: #a0a5ba; border-color: rgba(255,255,255,0.2);">Close</button>
         </div>
     </div>
 

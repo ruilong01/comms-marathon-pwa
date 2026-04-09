@@ -22,6 +22,8 @@ let currentQ = null;
 // Global overrides if custom module is active
 const urlParams = new URLSearchParams(window.location.search);
 const moduleName = urlParams.get('module');
+const requestedChapter = urlParams.get('chapter');
+const requestedChapters = urlParams.get('chapters') ? urlParams.get('chapters').split(',') : null;
 
 if (moduleName) {
     document.title = moduleName + " - Endless Marathon";
@@ -37,6 +39,9 @@ if (moduleName) {
         // Aggregate all questions from all chapters
         let aggregatedQuestions = [];
         customMod.chapters.forEach(chap => {
+            if(requestedChapter && chap.name !== requestedChapter) return;
+            if(requestedChapters && !requestedChapters.includes(chap.name)) return;
+            
             if(chap.questions) aggregatedQuestions.push(...chap.questions);
         });
 
@@ -251,6 +256,17 @@ function handleCorrect() {
 function handleWrong(customTitle = 'Incorrect') {
     currentStreak = 0;
     streakEl.innerText = currentStreak;
+    
+    // Save wrong question to local storage for Evaluation
+    if(moduleName && currentQ) {
+        try {
+            let stats = JSON.parse(localStorage.getItem('user_stats') || '{}');
+            if(!stats[moduleName]) stats[moduleName] = [];
+            stats[moduleName].push(currentQ);
+            if(stats[moduleName].length > 20) stats[moduleName].shift(); // Keep last 20 mostly
+            localStorage.setItem('user_stats', JSON.stringify(stats));
+        } catch(e) { console.error(e); }
+    }
     
     feedbackTitle.innerText = customTitle;
     feedbackExp.innerText = currentQ.explanation;

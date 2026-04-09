@@ -47,37 +47,33 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch event - Cache-First strategy
+// Fetch event - Network-First strategy
 self.addEventListener('fetch', event => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
   
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached response if found
-        if (response) {
-          return response;
+    fetch(event.request)
+      .then(networkResponse => {
+        // Check if we received a valid response
+        if(!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          return networkResponse;
         }
-        // Otherwise fetch from network
-        return fetch(event.request).then(networkResponse => {
-            // Check if we received a valid response
-            if(!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-              return networkResponse;
-            }
 
-            // Unbelievably crucial: Clone the response because the stream can only be consumed once!
-            const responseToCache = networkResponse.clone();
+        // Unbelievably crucial: Clone the response because the stream can only be consumed once!
+        const responseToCache = networkResponse.clone();
 
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                // Optionally cache external requests like google fonts here if we want completely pure offline
-                // But generally caching local assets is robust.
-                cache.put(event.request, responseToCache);
-              });
+        caches.open(CACHE_NAME)
+          .then(cache => {
+            // Update the cache immediately with fresh network response
+            cache.put(event.request, responseToCache);
+          });
 
-            return networkResponse;
-        });
+        return networkResponse;
+      })
+      .catch(() => {
+        // Fallback to cache if user is offline or network fails
+        return caches.match(event.request);
       })
   );
 });

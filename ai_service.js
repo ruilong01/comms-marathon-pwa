@@ -146,3 +146,42 @@ ${message}
     const rawParams = await callGemini(prompt, apiKey, false);
     return rawParams.trim();
 }
+
+// ----------------------------------------------------
+// 5. EVALUATE PERFORMANCE
+// ----------------------------------------------------
+async function evaluatePerformance(missedQs, apiKey) {
+    if(!missedQs || missedQs.length === 0) {
+        return "<p>You haven't answered any questions incorrectly yet! Take some quizzes first.</p>";
+    }
+    
+    // Group missed questions if multiple
+    let missedText = missedQs.map((q, i) => `${i+1}. ${q.prompt}`).join('\n');
+    let context = `I have recently answered the following questions incorrectly:\n${missedText}`;
+
+    const prompt = `You are an encouraging AI academic evaluator.
+Analyze the following list of questions that the student has answered incorrectly during their study sessions.
+Identify their core weaknesses, overarching blind spots in the syllabus, and suggest exactly what they should study to fix this.
+Return your response formatted purely in aesthetic HTML (e.g. <h3>, <ul>, <p>, <strong>, etc.) without markdown.
+
+${context}`;
+
+    const rawHtml = await callGemini(prompt, apiKey, false);
+    return rawHtml.trim();
+}
+
+// ----------------------------------------------------
+// 6. GENERATE EXAM ANALYSIS
+// ----------------------------------------------------
+async function generateExamAnalysis(pastPaperText, apiKey) {
+    const prompt = `You are an expert examiner. Read the following raw text from a university past year paper.
+Identify the recurring themes, what topics the examiners heavily favor, and any trick questions they tend to employ.
+Return your response purely in beautiful, structural HTML (e.g. <h3>, <ul>, <li>, <strong>, etc.) without any surrounding markdown blocks.
+
+PAST PAPER TEXT:
+${pastPaperText.substring(0, 40000)}
+`;
+
+    const rawHtml = await callGemini(prompt, apiKey, false);
+    return rawHtml.trim();
+}
