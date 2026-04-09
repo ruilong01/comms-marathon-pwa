@@ -122,17 +122,21 @@ ${pastPaperText.substring(0, 40000)}
 async function generateOverallSummary(chaptersArr, apiKey) {
     if(!chaptersArr || chaptersArr.length === 0) return "<p>No chapters uploaded yet.</p>";
 
-    let context = chaptersArr.map(c => `Chapter: ${c.name}\nContent Hints:\n${c.summary.substring(0, 500)}...`).join('\n\n');
+    let context = chaptersArr.map(c => `Chapter: ${c.name}\nContent Hints:\n${c.summary.substring(0, 15000)}...`).join('\n\n');
 
-    const prompt = `You are an academic planner drafting an overarching "Master Course Plan" for a module.
-Given the following chapters that exist in this module, write a comprehensive, cohesive, and encouraging HTML study plan (about 3-4 paragraphs) that describes how all these pieces fit together. 
+    const prompt = `You are an expert professor and precise academic summarizer. 
+Your goal is to synthesize the following chapter summaries into one exhaustive, high-yield "Cheat Sheet" or "Revision Guide" for the final exam.
+DO NOT write a generic study plan or outline. You MUST write deep, detailed technical explanations, combining key formulas, critical concepts, and the most heavily tested knowledge across all these chapters into a single masterpiece reference page.
 
 IMPORTANT VISUAL DESIGN RULES:
 You MUST format your ONLY output in raw HTML using our specific beautiful CSS design system. Use these structures instead of generic tags:
-1. Concept blocks: <div class="concept-card accent-blue"><div class="concept-icon">💡</div><h3>Title</h3><p>desc</p></div>  (You can use accent-blue, accent-red, or accent-purple)
-2. Highlights/Warnings: <div class="highlight-card red-hl"><div class="highlight-icon">⚠️</div><div><h3>Careful!</h3><p>...</p></div></div>
-3. General information: <div class="info-card accent-purple">...</div>
-4. Lists: <ul class="kb-list"><li>...</li></ul>
+1. Wrap related concepts in grids: <div class="two-col"> or <div class="three-col">
+2. Concept blocks: <div class="concept-card accent-blue"><div class="concept-icon">💡</div><h3>Title</h3><p>desc</p></div>  (Use accent-blue, accent-red, or accent-purple)
+3. Highlights/Warnings: <div class="highlight-card red-hl"><div class="highlight-icon">⚠️</div><div><h3>Exam Trap!</h3><p>...</p></div></div>
+4. General information: <div class="info-card accent-purple">...</div>
+5. Lists: <ul class="kb-list"><li>...</li></ul>
+6. Formulas or rules: <div class="formula-box blue">...</div>
+7. Examples inside cards: <div class="example-box">...</div>
 
 Do NOT use markdown code blocks (\`\`\`). JUST output the raw HTML exactly.
 
