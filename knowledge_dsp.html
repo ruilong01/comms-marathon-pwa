@@ -247,6 +247,54 @@
                             <li>Condition: The filter is only strictly physically stable if ALL mathematical poles exist entirely inside the Unit Circle: \( |z| < 1 \).</li>
                         </ul>
                     </div>
+
+                    <!-- Direct Form Diagram -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                        <h4 style="margin-bottom: 15px; color: var(--text-primary);">Graphic: IIR Feedback Loop (Direct Form)</h4>
+                        <svg viewBox="0 0 400 150" width="100%" height="auto" style="max-width: 400px; display:block; margin: 0 auto;">
+                            <!-- Input/Output Nodes -->
+                            <text x="30" y="45" fill="white" font-size="12" font-family="monospace">x[n]</text>
+                            <text x="360" y="45" fill="white" font-size="12" font-family="monospace">y[n]</text>
+
+                            <!-- Top Forward Path -->
+                            <line x1="60" y1="40" x2="340" y2="40" stroke="#00ff96" stroke-width="2" marker-end="url(#arr-green-dsp)"/>
+                            
+                            <!-- Middle Adders -->
+                            <circle cx="150" cy="40" r="10" fill="none" stroke="#00c3ff" stroke-width="2"/>
+                            <text x="145" y="44" fill="#00c3ff" font-size="14">+</text>
+                            <circle cx="250" cy="40" r="10" fill="none" stroke="#00c3ff" stroke-width="2"/>
+                            <text x="245" y="44" fill="#00c3ff" font-size="14">+</text>
+
+                            <!-- Z^-1 Delay Block (Feedback) -->
+                            <rect x="180" y="80" width="40" height="30" fill="rgba(255,75,75,0.2)" stroke="#ff3366" stroke-width="2"/>
+                            <text x="190" y="100" fill="#ff3366" font-size="12" font-family="monospace">Z⁻¹</text>
+                            
+                            <!-- Tap lines -->
+                            <!-- Tap off y[n] -->
+                            <line x1="300" y1="40" x2="300" y2="95" stroke="#ff3366" stroke-width="2"/>
+                            <line x1="300" y1="95" x2="220" y2="95" stroke="#ff3366" stroke-width="2" marker-end="url(#arr-pink-dsp)"/>
+
+                            <!-- Tap back into Adders -->
+                            <line x1="180" y1="95" x2="150" y2="95" stroke="#ff3366" stroke-width="2"/>
+                            <line x1="150" y1="95" x2="150" y2="50" stroke="#ff3366" stroke-width="2" marker-end="url(#arr-pink-dsp)"/>
+
+                            <!-- Multiplier coefficient -->
+                            <polygon points="120,75 140,85 120,95" fill="#ff3366"/>
+                            <text x="100" y="89" fill="#ff3366" font-size="12">-a₁</text>
+                            <line x1="180" y1="95" x2="140" y2="85" stroke="none" />
+
+                            <defs>
+                                <marker id="arr-green-dsp" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="#00ff96"/>
+                                </marker>
+                                <marker id="arr-pink-dsp" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="#ff3366"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                        <p style="font-size: 0.85rem; color: #b0bdc8; margin-top: 10px;">The aggressive red feedback loop explicitly ties past outputs back into the arithmetic adder. This exact feedback mechanism generates poles and creates the Infinite Impulse Response.</p>
+                    </div>
+
                 </div>
             </details>
 
@@ -260,11 +308,51 @@
                     <div style="font-size: 1.2rem; margin: 15px 0;">
                         \[ H(z) = \frac{\sum b_m z^{-m}}{\sum a_k z^{-k}} \implies H(z) = \frac{N(z)}{D(z)} \]
                     </div>
-                    <ul class="kb-list">
-                        <li><strong>Zeros:</strong> Roots of the numerator \( N(z) \). Whenever \( z \) equals a zero, the system completely annihilates that frequency.</li>
-                        <li><strong>Poles:</strong> Roots of the denominator \( D(z) \). Whenever \( z \) identically equals a pole, the system response mathematically explodes towards infinity.</li>
-                        <li><strong>Stability Law:</strong> The absolute Region of Convergence (ROC) must strictly encompass the unit circle (\( |z| = 1 \)) for the system to remain mathematically stable!</li>
-                    </ul>
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div>
+                            <ul class="kb-list">
+                                <li><strong>Zeros \( (o) \):</strong> Roots of the numerator \( N(z) \). Whenever \( z \) equals a zero, the system completely annihilates that frequency.</li>
+                                <li><strong>Poles \( (x) \):</strong> Roots of the denominator \( D(z) \). Whenever \( z \) identically equals a pole, the system response mathematically explodes towards infinity.</li>
+                            </ul>
+                            <div class="info-card accent-red" style="margin-top: 15px; padding:15px; background: rgba(255,75,75,0.05);">
+                                <h3 style="margin-bottom: 5px; color:#ff8080;">Examiner's Stability Trap</h3>
+                                <p style="font-size: 0.85rem">For a causal system, stability is <strong>strictly determined by poles</strong>. Zeros have absolutely no bearing on stability!</p>
+                                <ul class="kb-list" style="margin-top: 5px; font-size: 0.8rem;">
+                                    <li>If a pole is at \( |z| < 1 \) (inside the circle), its impulse response decays \(\to\) <strong>Stable</strong>.</li>
+                                    <li>If a pole is at \( |z| > 1 \) (outside the circle), its impulse response explodes \(\to\) <strong>Unstable</strong>.</li>
+                                    <li>The ROC mathematically MUST include the unit circle \( |z| = 1 \).</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center;">
+                            <h4 style="margin-bottom: 10px; color: var(--text-primary);">The Z-Plane (Complex Domain)</h4>
+                            <svg viewBox="-120 -120 240 240" width="100%" height="auto" style="max-width: 200px;">
+                                <!-- Axes & Unit Circle -->
+                                <line x1="-110" y1="0" x2="110" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="2"/> <!-- Re -->
+                                <line x1="0" y1="-110" x2="0" y2="110" stroke="rgba(255,255,255,0.3)" stroke-width="2"/> <!-- Im -->
+                                <circle cx="0" cy="0" r="70" fill="rgba(0, 255, 150, 0.1)" stroke="#00ff96" stroke-width="2" stroke-dasharray="4"/>
+                                <text x="75" y="15" fill="#00ff96" font-size="12" font-family="monospace">|z|=1</text>
+                                
+                                <!-- Stable Pole (Inside) -->
+                                <g transform="translate(30,-40)">
+                                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ff3366" stroke-width="2"/>
+                                    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#ff3366" stroke-width="2"/>
+                                </g>
+                                <text x="40" y="-45" fill="#ff3366" font-size="10">Stable Pole</text>
+
+                                <!-- Unstable Pole (Outside) -->
+                                <g transform="translate(-90, 30)">
+                                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ff3366" stroke-width="2"/>
+                                    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#ff3366" stroke-width="2"/>
+                                </g>
+                                <text x="-85" y="45" fill="#ff3366" font-size="10">Unstable Pole</text>
+
+                                <!-- Zero -->
+                                <circle cx="-40" cy="-20" r="4" fill="none" stroke="#00c3ff" stroke-width="2"/>
+                                <text x="-35" y="-25" fill="#00c3ff" font-size="10">Zero</text>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </details>
         </section>

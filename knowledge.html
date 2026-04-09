@@ -103,6 +103,46 @@
                         <li><strong>Data Link (L2):</strong> Node-to-node framing across a physical wire (MAC, Switches).</li>
                         <li><strong>Physical (L1):</strong> Electrical signaling across the raw cable (Hubs, Cables).</li>
                     </ul>
+                    
+                    <!-- OSI Encapsulation Flow SVG -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                        <h4 style="margin-bottom: 10px; color: var(--text-primary);">Data Encapsulation Flow (Downward)</h4>
+                        <p style="font-size: 0.85rem; color: #b0bdc8; margin-bottom: 10px;">Examiners frequently test encapsulation sequences: as data passes down the physical stack, each distinct layer physically wraps the payload in its own bespoke header.</p>
+                        <svg viewBox="0 0 400 150" width="100%" height="auto" style="max-width: 400px; display:block; margin: 0 auto;">
+                            <!-- App Block -->
+                            <rect x="180" y="10" width="120" height="25" rx="4" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="2"/>
+                            <text x="240" y="27" fill="#a855f7" font-size="12" font-family="monospace" text-anchor="middle" font-weight="bold">HTTP Payload</text>
+                            <text x="70" y="27" fill="#a0a5ba" font-size="10" font-family="monospace">L7 (Application)</text>
+
+                            <!-- Transport Block -->
+                            <path d="M 170 45 L 310 45 L 310 70 L 170 70 Z" fill="rgba(75,123,255,0.2)" stroke="#4b7bff" stroke-width="2"/>
+                            <rect x="140" y="45" width="30" height="25" fill="#4b7bff" stroke="#4b7bff" stroke-width="2"/>
+                            <text x="155" y="62" fill="white" font-size="10" font-family="monospace" text-anchor="middle" font-weight="bold">TCP</text>
+                            <text x="240" y="62" fill="#4b7bff" font-size="12" font-family="monospace" text-anchor="middle">Data Segment</text>
+                            <text x="70" y="62" fill="#a0a5ba" font-size="10" font-family="monospace">L4 (Transport)</text>
+
+                            <!-- Network Block -->
+                            <path d="M 130 80 L 320 80 L 320 105 L 130 105 Z" fill="rgba(0,195,255,0.2)" stroke="#00c3ff" stroke-width="2"/>
+                            <rect x="100" y="80" width="30" height="25" fill="#00c3ff" stroke="#00c3ff" stroke-width="2"/>
+                            <text x="115" y="97" fill="white" font-size="10" font-family="monospace" text-anchor="middle" font-weight="bold">IP</text>
+                            <text x="230" y="97" fill="#00c3ff" font-size="12" font-family="monospace" text-anchor="middle">IP Datagram</text>
+                            <text x="70" y="97" fill="#a0a5ba" font-size="10" font-family="monospace">L3 (Network)</text>
+
+                            <!-- Data Link Block -->
+                            <path d="M 90 115 L 330 115 L 330 140 L 90 140 Z" fill="rgba(255,75,75,0.2)" stroke="#ff4b4b" stroke-width="2"/>
+                            <rect x="60" y="115" width="30" height="25" fill="#ff4b4b" stroke="#ff4b4b" stroke-width="2"/>
+                            <text x="75" y="132" fill="white" font-size="10" font-family="monospace" text-anchor="middle" font-weight="bold">MAC</text>
+                            
+                            <rect x="330" y="115" width="30" height="25" fill="#ff4b4b" stroke="#ff4b4b" stroke-width="2"/>
+                            <text x="345" y="132" fill="white" font-size="10" font-family="monospace" text-anchor="middle" font-weight="bold">FCS</text>
+                            <text x="230" y="132" fill="#ff4b4b" font-size="12" font-family="monospace" text-anchor="middle">L2 Ethernet Frame</text>
+                            
+                            <!-- Arrow Lines Down -->
+                            <line x1="240" y1="35" x2="240" y2="45" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="2"/>
+                            <line x1="240" y1="70" x2="240" y2="80" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="2"/>
+                            <line x1="240" y1="105" x2="240" y2="115" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="2"/>
+                        </svg>
+                    </div>
                 </div>
             </details>
 
@@ -628,6 +668,46 @@
                             </ul>
                         </div>
                     </div>
+                    
+                    <!-- TCP Handshake SVG Flowchart -->
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                        <h4 style="margin-bottom: 15px; color: var(--text-primary);">TCP 3-Way Handshake</h4>
+                        <svg viewBox="0 0 400 180" width="100%" height="auto" style="max-width: 400px;">
+                            <!-- Vertical Timelines -->
+                            <line x1="80" y1="20" x2="80" y2="160" stroke="#a0a5ba" stroke-width="2" stroke-dasharray="4"/>
+                            <line x1="320" y1="20" x2="320" y2="160" stroke="#a0a5ba" stroke-width="2" stroke-dasharray="4"/>
+                            <text x="80" y="15" fill="white" font-size="12" font-weight="bold" text-anchor="middle">Client</text>
+                            <text x="320" y="15" fill="white" font-size="12" font-weight="bold" text-anchor="middle">Server</text>
+                            
+                            <!-- Step 1: SYN -->
+                            <line x1="80" y1="40" x2="310" y2="70" stroke="#00c3ff" stroke-width="2" marker-end="url(#arr-cyan)"/>
+                            <text x="140" y="50" fill="#00c3ff" font-size="10" font-family="monospace">1. SYN (Seq=X)</text>
+                            
+                            <!-- Step 2: SYN-ACK -->
+                            <line x1="320" y1="80" x2="90" y2="110" stroke="#ff3366" stroke-width="2" marker-end="url(#arr-pink)"/>
+                            <text x="160" y="105" fill="#ff3366" font-size="10" font-family="monospace">2. SYN-ACK (Seq=Y, Ack=X+1)</text>
+
+                            <!-- Step 3: ACK -->
+                            <line x1="80" y1="120" x2="310" y2="150" stroke="#00e676" stroke-width="2" marker-end="url(#arr-green)"/>
+                            <text x="130" y="130" fill="#00e676" font-size="10" font-family="monospace">3. ACK (Ack=Y+1)</text>
+
+                            <defs>
+                                <marker id="arr-cyan" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="#00c3ff"/>
+                                </marker>
+                                <marker id="arr-pink" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="#ff3366"/>
+                                </marker>
+                                <marker id="arr-green" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="#00e676"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                        <div class="info-card accent-blue" style="margin-top: 15px; padding:15px; background: rgba(75,123,255,0.05); text-align: left;">
+                            <h3 style="margin-bottom: 5px; color:#4b7bff;">Examiner's Reliability Trap</h3>
+                            <p style="font-size: 0.85rem">This strict 3-message sequence completely establishes the connection <strong>before a single byte of actual application payload data is natively transmitted.</strong> This algorithm explicitly isolates TCP as "Connection-Oriented," distinguishing it mechanically from UDP.</p>
+                        </div>
+                    </div>
                 </div>
             </details>
 
@@ -637,14 +717,36 @@
                     <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
                 </summary>
                 <div class="kb-details-content">
-                    <p>The standard Internet Checksum (used fundamentally in IPv4, TCP, and UDP) is a fast <strong>16-bit One's Complement Summation</strong>.</p>
+                    <p>The standard Internet Checksum (used fundamentally in IPv4, TCP, and UDP) is a fast <strong>16-bit One's Complement Summation</strong>. It is evaluated via software to provide a secondary backstop against corruption, unlike the vigorous hardware-level CRC math at Layer 2.</p>
                     <ol class="kb-list-ol" style="margin-top: 10px;">
                         <li>Partition the entire data sequence into 16-bit binary segments.</li>
                         <li>Add them fundamentally together using standard binary addition.</li>
-                        <li>If a high-bit carry overflows past 16 bits, it "wraps around" and is added inherently to the rightmost bit of the result (end-around carry).</li>
+                        <li><strong style="color: #ff8080;">Examiner Trap:</strong> If a high-bit carry overflows past 16 bits, it "wraps around" and is immediately added inherently to the rightmost bit of the result (end-around carry).</li>
                         <li>The final computed Checksum is the <strong>One's Complement (bitwise NOT)</strong> of the finalized aggregated sum!</li>
-                        <li><strong>Validation:</strong> The receiver inherently totals ALL data words AND the checksum. If the result is universally `1111111111111111`, the packet is valid!</li>
+                        <li><strong>Validation:</strong> The receiver inherently totals ALL data words AND the checksum. If the packet is flawlessly preserved, the validation sum is universally <code>1111111111111111</code>.</li>
                     </ol>
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                        <h4 style="margin-bottom: 15px; color: var(--text-primary);">Example: 16-bit End-Around Carry</h4>
+                        <svg viewBox="0 0 300 150" width="100%" height="auto" style="max-width: 300px;">
+                            <text x="50" y="30" fill="gray" font-size="14" font-family="monospace">Word 1: 1 1 0 0 1 1 0 0 1 1 0 0 1 1 0 0</text>
+                            <text x="50" y="55" fill="gray" font-size="14" font-family="monospace">Word 2: 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1</text>
+                            <line x1="50" y1="65" x2="280" y2="65" stroke="white" stroke-width="1"/>
+                            <text x="35" y="55" fill="white" font-size="14">+</text>
+                            
+                            <text x="40" y="85" fill="#ff3366" font-size="14" font-family="monospace">1</text> <!-- Overflow carry -->
+                            <text x="60" y="85" fill="white" font-size="14" font-family="monospace">0 0 1 0 0 0 1 0 0 0 1 0 0 0 0 1</text>
+                            
+                            <!-- Wrap around arrow -->
+                            <path d="M 45 92 Q 45 110 55 110 L 275 110 L 275 100" fill="none" stroke="#ff3366" stroke-width="1.5" marker-end="url(#arr-red-small)"/>
+                            <text x="160" y="125" fill="#ff3366" font-size="10">End-around Carry</text>
+
+                            <defs>
+                                <marker id="arr-red-small" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 Z" fill="#ff3366"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
                 </div>
             </details>
         </section>
