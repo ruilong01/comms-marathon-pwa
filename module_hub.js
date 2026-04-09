@@ -18,9 +18,16 @@ const examsList = document.getElementById('exams-list');
 const dzExam = document.getElementById('dz-exam');
 const fileExam = document.getElementById('file-exam');
 
-const loadingModal = document.getElementById('loading-modal');
-const loadingTitle = document.getElementById('loading-title');
-const loadingDesc = document.getElementById('loading-desc');
+const queuePanel = document.getElementById('upload-queue-panel');
+const queueList = document.getElementById('upload-queue-list');
+let activeUploads = 0;
+
+window.addEventListener('beforeunload', (e) => {
+    if (activeUploads > 0) {
+        e.preventDefault();
+        e.returnValue = 'You have active background uploads. Leaving will cancel them!';
+    }
+});
 
 // -- Initialization --
 function init() {
@@ -112,6 +119,34 @@ function init() {
     // Analysis logic
     document.getElementById('close-analysis-btn').addEventListener('click', () => {
         document.getElementById('analysis-modal').classList.remove('active');
+    });
+
+    document.getElementById('btn-generate-plan').addEventListener('click', async () => {
+        const key = localStorage.getItem('GEMINI_API_KEY');
+        if(!key) return alert("Missing API Key in Settings.");
+        
+        const mod = getModule();
+        if(!mod.chapters || mod.chapters.length === 0) return alert("Upload chapters first to compile a Master Plan.");
+        
+        const spinner = document.getElementById('gen-plan-spinner');
+        const textLabel = document.getElementById('gen-plan-text');
+        
+        spinner.style.display = 'block';
+        textLabel.innerText = "Analyzing chapters & drafting plan...";
+        document.getElementById('btn-generate-plan').style.pointerEvents = 'none';
+        
+        try {
+            const overallHtml = await generateOverallSummary(mod.chapters, key);
+            mod.overallSummary = overallHtml;
+            saveModule(mod);
+            window.location.href = `dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}`;
+        } catch(err) {
+            alert("Failed to generate plan: " + err.message);
+        } finally {
+            spinner.style.display = 'none';
+            textLabel.innerText = "🔄 Generate & Review Master Study Plan";
+            document.getElementById('btn-generate-plan').style.pointerEvents = 'all';
+        }
     });
 
     setupDropzone(dzChapter, fileChapter, handleChapterUpload);
@@ -262,15 +297,24 @@ async function handleChapterUpload(file) {
 
     const cleanName = file.name.split('.')[0];
     
+    // Duplicate Prevention Check
+    const modCheck = getModule();
+    if(modCheck.chapters && modCheck.chapters.some(c => c.name === cleanName)) {
+        alert(`Duplicate Rejected: A chapter named "${cleanName}" already exists!`);
+        return;
+    }
+
+    const task = createQueueItem(`Chapter: ${cleanName}`);
+    
     try {
-        showLoading(`Extracting ${cleanName}...`, "Reading raw PDF chunks locally.");
+        task.setStatus("Reading raw PDF chunks locally...", false);
         const text = await extractText(file);
 
-        showLoading("Generating Chapter Details...", "AI is drafting the HTML study guide and rigorous MCQs.");
+        task.setStatus("AI drafting guide & rigourous MCQs...", false);
         const chapterData = await generateChapterContent(text, key, cleanName);
 
         // Save
-        const mod = getModule();
+        const mod = getModule(); // Re-fetch to avoid race conditions
         if(!mod.chapters) mod.chapters = [];
         mod.chapters.push({
             id: 'chap-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9),
@@ -279,20 +323,12 @@ async function handleChapterUpload(file) {
             questions: chapterData.questions
         });
 
-        // Trigger Overall summary generation in the background so it doesn't block the UI heavily
-        generateOverallSummary(mod.chapters, key).then(overallHtml => {
-            mod.overallSummary = overallHtml;
-            saveModule(mod);
-            console.log("Automatically updated the overall macro-plan.");
-        }).catch(err => console.error("Could not generate overall summary:", err));
-
         saveModule(mod);
         renderHub();
-        hideLoading();
-        
+        task.complete();
     } catch(err) {
-        hideLoading();
-        alert(`Chapter "${cleanName}" Generation Failed: ${err.message}`);
+        task.setStatus(`Failed: ${err.message}`, true);
+        setTimeout(() => task.complete(true), 5000);
     }
 }
 
@@ -302,41 +338,80 @@ async function handleExamUpload(file) {
 
     const cleanName = file.name.split('.')[0];
     
+    // Duplicate Check
+    const modCheck = getModule();
+    if(modCheck.exams && modCheck.exams.some(e => e.name === `AI Mock: ${cleanName}`)) {
+        alert(`Duplicate Rejected: Exam Mock for "${cleanName}" already exists!`);
+        return;
+    }
+
+    const task = createQueueItem(`Exam: ${cleanName}`);
+    
     try {
-        showLoading(`Analysing Past Paper...`, "Extracting paper structure, marks, and historical questions.");
+        task.setStatus("Extracting paper structure & topics...", false);
         const text = await extractText(file);
 
-        showLoading("Extracting Examiner Patterns...", "The AI is determining what topics are heavily favored.");
+        task.setStatus("Extracting Examiner Patterns...", false);
         const analysisData = await generateExamAnalysis(text, key);
 
-        showLoading("Simulating Mock Exam...", "The AI is inventing totally original scenarios mirroring the exact format. This usually takes 30-40s.");
+        task.setStatus("Simulating Mock (takes ~30s)...", false);
         const mockData = await generateMockExam(text, key);
+        
         mockData.id = 'exam-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9);
-        mockData.name = `AI Mock: ${cleanName}`; // Internal ID
-        mockData.analysis = analysisData; // Store the analysis alongside
+        mockData.name = `AI Mock: ${cleanName}`;
+        mockData.analysis = analysisData;
 
-        const mod = getModule();
+        const mod = getModule(); // Re-fetch
         if(!mod.exams) mod.exams = [];
         mod.exams.push(mockData);
         saveModule(mod);
         
         renderHub();
-        hideLoading();
-
+        task.complete();
     } catch(err) {
-        hideLoading();
-        alert(`Exam "${cleanName}" Generation Failed: ${err.message}`);
+        task.setStatus(`Failed: ${err.message}`, true);
+        setTimeout(() => task.complete(true), 5000);
     }
 }
 
-// -- Loading UI --
-function showLoading(title, desc) {
-    loadingTitle.innerText = title;
-    loadingDesc.innerText = desc;
-    loadingModal.classList.add('active');
-}
-function hideLoading() {
-    loadingModal.classList.remove('active');
+// -- UI Queue Management --
+function createQueueItem(title) {
+    if(activeUploads === 0) queuePanel.style.display = 'flex';
+    activeUploads++;
+    
+    const div = document.createElement('div');
+    div.style.padding = '10px';
+    div.style.background = 'rgba(255,255,255,0.05)';
+    div.style.border = '1px solid rgba(255,255,255,0.1)';
+    div.style.borderRadius = '8px';
+    
+    div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="color:#fff; font-size:0.9rem; margin-bottom:4px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${title}</strong>
+            <div class="spinner" style="width:12px; height:12px; border-width:2px; margin:0;" id="spin-${activeUploads}"></div>
+        </div>
+        <p style="margin:0; font-size:0.75rem; color:#a0a5ba;" class="task-status">Starting...</p>
+    `;
+    queueList.appendChild(div);
+    const statusText = div.querySelector('.task-status');
+    const spinner = div.querySelector('.spinner');
+
+    return {
+        setStatus: (msg, isError) => {
+            statusText.innerText = msg;
+            if (isError) {
+                statusText.style.color = '#ff3366';
+                if(spinner) spinner.style.display = 'none';
+            }
+        },
+        complete: (isError = false) => {
+            if(!isError) div.remove();
+            activeUploads--;
+            if(activeUploads <= 0) {
+                queuePanel.style.display = 'none';
+            }
+        }
+    };
 }
 
 // -- Deletion Handlers --
