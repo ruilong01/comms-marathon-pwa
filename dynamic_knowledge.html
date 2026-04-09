@@ -113,21 +113,7 @@
             }
         }
 
-        window.onload = () => {
-            renderDynamicKnowledge();
-            // Allow time for DOM to paint before mermaid rendering
-            setTimeout(() => {
-                if(window.mermaid) {
-                    window.mermaid.run({ querySelector: '.mermaid' }).catch(err => console.warn('Mermaid rendering skipped or failed:', err));
-                }
-            }, 100);
-        };
-    </script>
-    <!-- Import Mermaid JS for dynamic diagram rendering -->
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: false, theme: 'dark', fontFamily: 'Outfit' });
-        window.mermaid = mermaid;
+        window.onload = renderDynamicKnowledge;
     </script>
 </body>
 </html>
