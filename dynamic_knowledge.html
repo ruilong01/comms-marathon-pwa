@@ -99,15 +99,31 @@
                     
                     const section = document.createElement('section');
                     section.className = 'kb-section';
-                    section.innerHTML = `
-                        <div class="section-header">
-                            <span class="section-icon">📖</span>
-                            <div><h2>${chap.name}</h2></div>
-                        </div>
-                        <div class="glass-card" style="padding:1.5rem; line-height:1.6; color:#b0bdc8;">
-                            ${chap.summary}
-                        </div>
-                    `;
+                    
+                    if (chap.isAIEnhanced === false) {
+                        section.innerHTML = `
+                            <div class="section-header">
+                                <span class="section-icon">📄</span>
+                                <div><h2>${chap.name} (Raw Text)</h2></div>
+                            </div>
+                            <div class="glass-card" style="padding:1.5rem; line-height:1.6; color:#b0bdc8;">
+                                <div class="info-card accent-purple" style="margin-bottom:15px;">
+                                    <strong>AI Processing Pending:</strong> This is the raw text extracted directly from your PDF. Use the "✨ Enhance (AI)" button in the Hub to automatically format this into a structured Cheat Sheet.
+                                </div>
+                                <div style="white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; max-height: 600px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">${chap.rawText || "No text could be extracted."}</div>
+                            </div>
+                        `;
+                    } else {
+                        section.innerHTML = `
+                            <div class="section-header">
+                                <span class="section-icon">📖</span>
+                                <div><h2>${chap.name}</h2></div>
+                            </div>
+                            <div class="glass-card" style="padding:1.5rem; line-height:1.6; color:#b0bdc8;">
+                                ${chap.summary}
+                            </div>
+                        `;
+                    }
                     chapMount.appendChild(section);
                 });
             }

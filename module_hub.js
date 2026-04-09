@@ -187,12 +187,15 @@ function renderHub() {
                     <button class="delete-btn" onclick="deleteChapter(event, '${chap.id}')" title="Delete Chapter">🗑️</button>
                 </div>
                 <p style="margin-top:10px; margin-bottom:10px;">${chap.isAIEnhanced === false ? 'Default Classic Questions' : chap.questions.length + ' AI Questions'}</p>
-                <div style="display:flex; gap:10px;">
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:flex; gap:10px;">
+                        <a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>
+                        <a href="dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 Know</a>
+                    </div>
                     ${chap.isAIEnhanced === false 
-                        ? `<button class="mock-btn" onclick="enhanceChapter(event, '${chap.id}')" style="flex:1; border-color: #00c3ff; color: #00c3ff; font-weight: bold;">✨ Enhance (AI)</button>` 
-                        : `<a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>`
+                        ? `<button class="mock-btn" onclick="enhanceChapter(event, '${chap.id}')" style="width:100%; border-color: #00c3ff; color: #00c3ff; font-weight: bold; background: rgba(0, 195, 255, 0.1);">✨ Enhance (AI)</button>` 
+                        : ''
                     }
-                    <a href="dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 Know</a>
                 </div>
             `;
             chaptersList.insertBefore(card, dzChapter);
