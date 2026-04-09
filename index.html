@@ -302,7 +302,25 @@
                 <p style="font-size: 0.8rem; color: #b0bdc8; margin-top: 0.5rem;">Your key is stored securely in your browser's local memory only.</p>
             </div>
             
-            <button class="action-btn" id="save-settings-btn">Save Key</button>
+            <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.2); margin: 1.5rem 0;">
+
+            <h3 style="color:#a855f7; margin-bottom:1rem;">Cloud Sync</h3>
+            <div class="form-group">
+                <label>GitHub Personal Access Token (PAT)</label>
+                <input type="password" id="github-pat" class="form-input" placeholder="ghp_...">
+                <p style="font-size: 0.8rem; color: #b0bdc8; margin-top: 0.5rem;">For syncing via Secret Gist.</p>
+            </div>
+            <div class="form-group">
+                <label>Sync Gist ID</label>
+                <input type="text" id="gist-id" class="form-input" placeholder="Leave blank to create new on Backup">
+            </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom: 20px;">
+                <button class="action-btn" id="backup-btn" style="flex:1; background:rgba(0,195,255,0.2); border-color:#00c3ff;">⬆️ Backup</button>
+                <button class="action-btn" id="sync-btn" style="flex:1; background:rgba(168,85,247,0.2); border-color:#a855f7;">⬇️ Sync</button>
+            </div>
+
+            <button class="action-btn" id="save-settings-btn">Save Config & Close</button>
         </div>
     </div>
 

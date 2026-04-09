@@ -7,7 +7,11 @@
 const openSettingsBtn = document.getElementById('open-settings-btn');
 const settingsModal = document.getElementById('settings-modal');
 const geminiKeyInput = document.getElementById('gemini-key');
+const githubPatInput = document.getElementById('github-pat');
+const gistIdInput = document.getElementById('gist-id');
 const saveSettingsBtn = document.getElementById('save-settings-btn');
+const backupBtn = document.getElementById('backup-btn');
+const syncBtn = document.getElementById('sync-btn');
 
 const createModuleBtn = document.getElementById('create-module-btn');
 const createModal = document.getElementById('create-modal');
@@ -23,9 +27,15 @@ const modulesList = document.getElementById('modules-list');
 function init() {
     renderModules();
     
-    // Load api key
+    // Load keys
     const savedKey = localStorage.getItem('GEMINI_API_KEY');
     if (savedKey) geminiKeyInput.value = savedKey;
+
+    const savedGH = localStorage.getItem('GH_PAT');
+    if (savedGH) githubPatInput.value = savedGH;
+    
+    const savedGist = localStorage.getItem('GIST_ID');
+    if (savedGist) gistIdInput.value = savedGist;
 
     // Events
     openSettingsBtn.addEventListener('click', () => settingsModal.classList.add('active'));
@@ -35,9 +45,14 @@ function init() {
     
     saveSettingsBtn.addEventListener('click', () => {
         localStorage.setItem('GEMINI_API_KEY', geminiKeyInput.value.trim());
+        localStorage.setItem('GH_PAT', githubPatInput.value.trim());
+        localStorage.setItem('GIST_ID', gistIdInput.value.trim());
         settingsModal.classList.remove('active');
-        alert('API Key Saved Successfully!');
+        alert('Configuration Saved Successfully!');
     });
+
+    backupBtn.addEventListener('click', backupToCloud);
+    syncBtn.addEventListener('click', syncFromCloud);
 
     createModuleBtn.addEventListener('click', () => createModal.classList.add('active'));
     closeCreateBtn.addEventListener('click', () => {
@@ -132,6 +147,101 @@ window.deleteModule = function(e, name) {
         localStorage.setItem('dynamic_modules', JSON.stringify(filtered));
         renderModules();
     }
+}
+
+// --- CLOUD SYNC LOGIC ---
+
+async function backupToCloud() {
+    const pat = githubPatInput.value.trim();
+    if (!pat) return alert("Please provide a GitHub PAT first.");
+    
+    const payload = {
+        dynamic_modules: JSON.parse(localStorage.getItem('dynamic_modules') || '[]'),
+        user_stats: JSON.parse(localStorage.getItem('user_stats') || '{}')
+    };
+
+    const gistData = {
+        description: "Comms Marathon Cloud Backup",
+        public: false,
+        files: {
+            "quiz_backup.json": { content: JSON.stringify(payload) }
+        }
+    };
+
+    let gistId = gistIdInput.value.trim();
+    const isUpdate = !!gistId;
+    const url = isUpdate ? `https://api.github.com/gists/${gistId}` : `https://api.github.com/gists`;
+    const method = isUpdate ? "PATCH" : "POST";
+
+    backupBtn.innerText = "⏳ Backing up...";
+    
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                "Authorization": `token ${pat}`,
+                "Accept": "application/vnd.github.v3+json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(gistData)
+        });
+
+        if (!response.ok) throw new Error(`API Error ${response.status}: ${await response.text()}`);
+
+        const result = await response.json();
+        
+        if (!isUpdate) {
+            gistIdInput.value = result.id;
+            localStorage.setItem('GIST_ID', result.id);
+            alert(`New backup created! Your Gist ID is:\n\n${result.id}\n\nSave this ID on your other devices to sync!`);
+        } else {
+            alert("Backup updated successfully!");
+        }
+
+    } catch (err) {
+        alert("Backup failed: " + err.message);
+    }
+    
+    backupBtn.innerText = "⬆️ Backup";
+}
+
+async function syncFromCloud() {
+    const pat = githubPatInput.value.trim();
+    const gistId = gistIdInput.value.trim();
+    
+    if (!pat || !gistId) return alert("Both GitHub PAT and Gist ID are required to sync.");
+
+    if(!confirm("⚠️ Syncing will overwrite all existing modules on this device. Proceed?")) return;
+
+    syncBtn.innerText = "⏳ Syncing...";
+
+    try {
+        const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `token ${pat}`,
+                "Accept": "application/vnd.github.v3+json"
+            }
+        });
+
+        if (!response.ok) throw new Error(`API Error ${response.status}`);
+
+        const result = await response.json();
+        const fileContent = result.files["quiz_backup.json"].content;
+        const parsed = JSON.parse(fileContent);
+
+        localStorage.setItem('dynamic_modules', JSON.stringify(parsed.dynamic_modules || []));
+        localStorage.setItem('user_stats', JSON.stringify(parsed.user_stats || {}));
+        
+        renderModules();
+        settingsModal.classList.remove('active');
+        alert("Sync complete! Modules have been populated.");
+
+    } catch (err) {
+        alert("Sync failed: Make sure your Gist ID is correct. " + err.message);
+    }
+    
+    syncBtn.innerText = "⬇️ Sync";
 }
 
 window.onload = init;
