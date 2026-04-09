@@ -249,6 +249,36 @@
                 </div>
             </div>
             
+            <details class="kb-accordion" style="border-color: rgba(0, 195, 255, 0.4);">
+                <summary class="kb-summary">
+                    <span>Discrete Fourier Transform (DFT & FFT)</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>The DFT converts a finite sequence of equally-spaced samples into a same-length sequence of complex numbers (frequency bins). However, manually computing the Direct Matrix form is computationally devastating for a CPU.</p>
+                    
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="info-card accent-red">
+                            <h3 style="color:#ff8080;">Direct Computation \( O(N^2) \)</h3>
+                            <ul class="kb-list" style="margin-top:10px;">
+                                <li><strong>Multiplications:</strong> \( N^2 \) complex multiplications.</li>
+                                <li><strong>Additions:</strong> \( N(N-1) \) complex additions.</li>
+                                <li>For a 1024-point sequence (\(N=1024\)), direct computation demands over 1 Million explicit multiplications!</li>
+                            </ul>
+                        </div>
+                        <div class="info-card accent-blue">
+                            <h3 style="color:#4b7bff;">Fast Fourier Transform \( O(N \log_2 N) \)</h3>
+                            <ul class="kb-list" style="margin-top:10px;">
+                                <li>The FFT is not a new equation! It's just a hyper-efficient algorithmic trick (divide-and-conquer) to compute the exact DFT.</li>
+                                <li><strong>Multiplications:</strong> \( \frac{N}{2} \log_2 N \) multiplications.</li>
+                                <li><strong>Additions:</strong> \( N \log_2 N \) additions.</li>
+                                <li>For \(N=1024\), the FFT reduces 1,000,000 multiplications to just 5,120!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
             <details class="kb-accordion" style="border-color: rgba(168, 85, 247, 0.4);">
                 <summary class="kb-summary">
                     <span>The Z-Transform defined</span>
@@ -417,33 +447,139 @@
                                 </ul>
                             </div>
                         </div>
-                        <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center;">
-                            <h4 style="margin-bottom: 10px; color: var(--text-primary);">The Z-Plane (Complex Domain)</h4>
-                            <svg viewBox="-120 -120 240 240" width="100%" height="auto" style="max-width: 200px;">
-                                <!-- Axes & Unit Circle -->
-                                <line x1="-110" y1="0" x2="110" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="2"/> <!-- Re -->
-                                <line x1="0" y1="-110" x2="0" y2="110" stroke="rgba(255,255,255,0.3)" stroke-width="2"/> <!-- Im -->
-                                <circle cx="0" cy="0" r="70" fill="rgba(0, 255, 150, 0.1)" stroke="#00ff96" stroke-width="2" stroke-dasharray="4"/>
-                                <text x="75" y="15" fill="#00ff96" font-size="12" font-family="monospace">|z|=1</text>
+                        <div style="grid-column: 1 / -1; margin-top: 15px;">
+                            <h3 style="color: #00ff96; border-bottom: 2px solid rgba(0, 255, 150, 0.3); padding-bottom: 5px; margin-bottom: 15px;">🔍 Examiner's Geometric Z-Plane Traps</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
                                 
-                                <!-- Stable Pole (Inside) -->
-                                <g transform="translate(30,-40)">
-                                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ff3366" stroke-width="2"/>
-                                    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#ff3366" stroke-width="2"/>
-                                </g>
-                                <text x="40" y="-45" fill="#ff3366" font-size="10">Stable Pole</text>
+                                <!-- Trap 1: Complex Conjugates -->
+                                <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center;">
+                                    <h4 style="color: var(--text-primary); font-size: 0.9rem;">1. Complex Conjugate Law</h4>
+                                    <p style="font-size: 0.75rem; margin-bottom: 10px; color: #b0bdc8;">If a filter has <strong>real coefficients</strong>, all complex poles MUST securely exist in mirror pairs across the Real axis.</p>
+                                    <svg viewBox="-80 -80 160 160" width="100%" height="auto">
+                                        <line x1="-70" y1="0" x2="70" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                                        <line x1="0" y1="-70" x2="0" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                                        <circle cx="0" cy="0" r="50" fill="none" stroke="#00ff96" stroke-width="1.5" stroke-dasharray="3"/>
+                                        <!-- Pole Pair -->
+                                        <g transform="translate(20,-30)">
+                                            <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ff3366" stroke-width="2"/><line x1="-4" y1="4" x2="4" y2="-4" stroke="#ff3366" stroke-width="2"/>
+                                        </g>
+                                        <g transform="translate(20,30)">
+                                            <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ff3366" stroke-width="2"/><line x1="-4" y1="4" x2="4" y2="-4" stroke="#ff3366" stroke-width="2"/>
+                                        </g>
+                                        <path d="M 25 -25 Q 35 0 25 25" fill="none" stroke="yellow" stroke-width="1" stroke-dasharray="2" marker-end="url(#arr-yellow)"/>
+                                    </svg>
+                                </div>
 
-                                <!-- Unstable Pole (Outside) -->
-                                <g transform="translate(-90, 30)">
-                                    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#ff3366" stroke-width="2"/>
-                                    <line x1="-4" y1="4" x2="4" y2="-4" stroke="#ff3366" stroke-width="2"/>
-                                </g>
-                                <text x="-85" y="45" fill="#ff3366" font-size="10">Unstable Pole</text>
+                                <!-- Trap 2: Linear Phase Reciprocal -->
+                                <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center;">
+                                    <h4 style="color: var(--text-primary); font-size: 0.9rem;">2. Reciprocal Symmetry</h4>
+                                    <p style="font-size: 0.75rem; margin-bottom: 10px; color: #b0bdc8;">For an FIR filter to have perfect <strong>Linear Phase</strong>, every zero \(z_0\) must have a reciprocal twin at \(1/z_0\).</p>
+                                    <svg viewBox="-80 -80 160 160" width="100%" height="auto">
+                                        <line x1="-70" y1="0" x2="70" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                                        <line x1="0" y1="-70" x2="0" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                                        <circle cx="0" cy="0" r="40" fill="none" stroke="#00ff96" stroke-width="1.5" stroke-dasharray="3"/>
+                                        <!-- Zero at 0.5 -->
+                                        <circle cx="20" cy="0" r="3" fill="none" stroke="#00c3ff" stroke-width="2"/>
+                                        <text x="15" y="-10" fill="#00c3ff" font-size="8">z=0.5</text>
+                                        <!-- Zero at 2.0 -->
+                                        <circle cx="80" cy="0" r="3" fill="none" stroke="#00c3ff" stroke-width="2"/>
+                                        <text x="70" y="-10" fill="#00c3ff" font-size="8">z=2.0</text>
+                                        <path d="M 20 5 Q 50 20 80 5" fill="none" stroke="yellow" stroke-width="1" stroke-dasharray="2" marker-end="url(#arr-yellow)"/>
+                                        
+                                        <defs>
+                                            <marker id="arr-yellow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                                <path d="M0,0 L6,3 L0,6 Z" fill="yellow"/>
+                                            </marker>
+                                        </defs>
+                                    </svg>
+                                </div>
 
-                                <!-- Zero -->
-                                <circle cx="-40" cy="-20" r="4" fill="none" stroke="#00c3ff" stroke-width="2"/>
-                                <text x="-35" y="-25" fill="#00c3ff" font-size="10">Zero</text>
-                            </svg>
+                                <!-- Trap 3: Minimum Phase -->
+                                <div style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center;">
+                                    <h4 style="color: var(--text-primary); font-size: 0.9rem;">3. Minimum Phase</h4>
+                                    <p style="font-size: 0.75rem; margin-bottom: 10px; color: #b0bdc8;">A system is Minimum Phase if and only if ALL poles <strong>AND ALL ZEROS</strong> are strictly locked inside the Unit Circle.</p>
+                                    <svg viewBox="-80 -80 160 160" width="100%" height="auto">
+                                        <line x1="-70" y1="0" x2="70" y2="0" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                                        <line x1="0" y1="-70" x2="0" y2="70" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                                        <!-- Inside Circle area -->
+                                        <circle cx="0" cy="0" r="50" fill="rgba(168,85,247,0.2)" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="3"/>
+                                        <text x="-40" y="-55" fill="#a855f7" font-size="8" font-weight="bold">Must be INSIDE</text>
+                                        
+                                        <!-- Elements inside -->
+                                        <g transform="translate(-15,-15)">
+                                            <line x1="-3" y1="-3" x2="3" y2="3" stroke="#ff3366" stroke-width="1.5"/><line x1="-3" y1="3" x2="3" y2="-3" stroke="#ff3366" stroke-width="1.5"/>
+                                        </g>
+                                        <circle cx="25" cy="20" r="3" fill="none" stroke="#00c3ff" stroke-width="1.5"/>
+                                        <circle cx="-30" cy="20" r="3" fill="none" stroke="#00c3ff" stroke-width="1.5"/>
+                                    </svg>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- EXAMINER DEEP DIVE: Filter Characteristics -->
+            <details class="kb-accordion" style="border-color: rgba(168, 85, 247, 0.4);">
+                <summary class="kb-summary">
+                    <span>Practical Filter Design & Windows</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>Ideal filters intuitively possess a perfect "Brick-Wall" drop-off, seamlessly transitioning from passband to stopband. In physical reality, this necessitates an infinite impulse response duration! Practical filters therefore exhibit physical imperfections.</p>
+
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                        <h4 style="margin-bottom: 15px; color: var(--text-primary);">Graphic: Anatomy of a Practical Low-Pass Filter</h4>
+                        <svg viewBox="0 0 400 150" width="100%" height="auto" style="max-width: 400px; display:block; margin: 0 auto;">
+                            <!-- Axes -->
+                            <line x1="20" y1="120" x2="380" y2="120" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                            <line x1="40" y1="140" x2="40" y2="10" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                            <text x="360" y="135" fill="rgba(255,255,255,0.5)" font-size="10">Freq (ω)</text>
+                            <text x="5" y="20" fill="rgba(255,255,255,0.5)" font-size="10">|H(ω)|</text>
+
+                            <!-- Ideal Brick Wall -->
+                            <line x1="40" y1="30" x2="160" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="2" stroke-dasharray="4"/>
+                            <line x1="160" y1="30" x2="160" y2="120" stroke="rgba(255,255,255,0.1)" stroke-width="2" stroke-dasharray="4"/>
+
+                            <!-- Practical Curve (Ripple -> Transition -> Stop) -->
+                            <path d="M 40 30 Q 70 10 100 30 T 160 30 Q 200 30 220 110 Q 260 90 300 115 T 380 115" fill="none" stroke="#a855f7" stroke-width="2"/>
+                            
+                            <!-- Passband bounds -->
+                            <line x1="40" y1="15" x2="160" y2="15" stroke="#00ff96" stroke-width="1"/>
+                            <line x1="40" y1="45" x2="160" y2="45" stroke="#00ff96" stroke-width="1"/>
+                            <text x="180" y="25" fill="#00ff96" font-size="10">Passband Ripple (1±δp)</text>
+                            
+                            <!-- Stop bounds -->
+                            <line x1="220" y1="95" x2="380" y2="95" stroke="#ff3366" stroke-width="1"/>
+                            <text x="240" y="90" fill="#ff3366" font-size="10">Stopband Ripple (δs)</text>
+
+                            <!-- Labels -->
+                            <text x="100" y="135" fill="#a0a5ba" font-size="10">Passband</text>
+                            <text x="190" y="145" fill="#00c3ff" font-size="10">Transition Band</text>
+                            <text x="300" y="135" fill="#a0a5ba" font-size="10">Stopband</text>
+
+                            <!-- Boundary lines -->
+                            <line x1="160" y1="120" x2="160" y2="30" stroke="#00c3ff" stroke-width="1" stroke-dasharray="3"/>
+                            <line x1="220" y1="120" x2="220" y2="110" stroke="#00c3ff" stroke-width="1" stroke-dasharray="3"/>
+                        </svg>
+                    </div>
+
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="info-card accent-blue">
+                            <h3>Windowing Functions</h3>
+                            <ul class="kb-list">
+                                <li><strong>Rectangular Window:</strong> Simplest truncation. Yields the narrowest transition band, but causes violent high-amplitude ripples (Gibbs Phenomenon).</li>
+                                <li><strong>Hamming/Hanning Window:</strong> Tapers off smoothly. Massively suppresses side-lobe ripple amplitude, at the direct expense of a wider Transition Band width.</li>
+                            </ul>
+                        </div>
+                        <div class="info-card accent-red">
+                            <h3>Parks-McClellan algorithm</h3>
+                            <ul class="kb-list">
+                                <li>Utilizes the Remez exchange algorithm to design optimal FIR filters.</li>
+                                <li><strong>Equiripple:</strong> Distributes the error evenly across the passband and stopband.</li>
+                                <li><strong>The "Don't Care" Band:</strong> PM explicitly ignores optimizing the Transition Band, focusing math entirely on maximizing pass/stop behavior!</li>
+                            </ul>
                         </div>
                     </div>
                 </div>

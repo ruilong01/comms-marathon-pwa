@@ -146,6 +146,66 @@
                 </div>
             </details>
 
+            <!-- Physical Layer Limits -->
+            <details class="kb-accordion" style="border-color: rgba(255, 204, 0, 0.4);">
+                <summary class="kb-summary">
+                    <span>Physical Layer Constraints & Line Coding</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>Before logical framing happens, raw bits must be physically converted into electrical pulses over copper or waves over the air.</p>
+                    
+                    <div class="two-col" style="margin-top: 15px;">
+                        <div class="info-card accent-blue">
+                            <h3 style="color:#00c3ff;">Shannon Channel Capacity</h3>
+                            <p style="font-size: 0.85rem">Defines the absolute physical limit of data transmission rate (\(C\)) over a noisy channel with Bandwidth \(B\).</p>
+                            <div class="math-block" style="font-size: 1.2rem; margin:10px 0;">\( C = B \log_2(1+S/N) \)</div>
+                            <p style="font-size: 0.85rem; color:#b0bdc8;">*S/N is the raw Signal-to-Noise Ratio (NOT in dB)! Examiners trap students by providing SNR in dB, which must instantly be converted using \( SNR_{raw} = 10^{dB/10} \).</p>
+                        </div>
+                        <div class="info-card accent-red">
+                            <h3 style="color:#ff8080;">Nyquist Bit Rate</h3>
+                            <p style="font-size: 0.85rem">Assuming a completely noiseless channel, the maximum capacity is limited merely by the Bandwidth and the \(M\) discrete voltage levels used to encode signals.</p>
+                            <div class="math-block" style="font-size: 1.2rem; margin:10px 0;">\( C = 2B \log_2 M \)</div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                        <h4 style="margin-bottom: 15px; color: var(--text-primary);">Graphic: Digital Line Coding</h4>
+                        <p style="font-size: 0.85rem; color:#b0bdc8; margin-bottom:15px;">Self-clocking mechanisms require voltage transitions. Manchester guarantees a clock cycle mid-bit, whereas NRZ suffers synchronization issues under long strings of zeroes.</p>
+                        <svg viewBox="0 0 400 120" width="100%" height="auto" style="max-width: 400px; display:block; margin: 0 auto;">
+                            <!-- Data Bit Array -->
+                            <text x="30" y="20" fill="white" font-size="12" font-family="monospace">Bit:</text>
+                            <text x="75" y="20" fill="#00ff96" font-size="12">1</text>
+                            <text x="125" y="20" fill="#ff4b4b" font-size="12">0</text>
+                            <text x="175" y="20" fill="#00ff96" font-size="12">1</text>
+                            <text x="225" y="20" fill="#00ff96" font-size="12">1</text>
+                            <text x="275" y="20" fill="#ff4b4b" font-size="12">0</text>
+                            
+                            <!-- Grid lines -->
+                            <line x1="50" y1="30" x2="300" y2="30" stroke="rgba(255,255,255,0.1)" />
+                            <line x1="50" y1="55" x2="300" y2="55" stroke="rgba(255,255,255,0.3)" stroke-dasharray="2"/>
+                            <line x1="50" y1="80" x2="300" y2="80" stroke="rgba(255,255,255,0.1)" />
+                            
+                            <line x1="100" y1="30" x2="100" y2="100" stroke="rgba(255,255,255,0.1)" stroke-dasharray="2"/>
+                            <line x1="150" y1="30" x2="150" y2="100" stroke="rgba(255,255,255,0.1)" stroke-dasharray="2"/>
+                            <line x1="200" y1="30" x2="200" y2="100" stroke="rgba(255,255,255,0.1)" stroke-dasharray="2"/>
+                            <line x1="250" y1="30" x2="250" y2="100" stroke="rgba(255,255,255,0.1)" stroke-dasharray="2"/>
+
+                            <!-- NRZ-I (Toggles on 1, Stays on 0) -->
+                            <text x="0" y="45" fill="#a855f7" font-size="9">NRZ-I:</text>
+                            <!-- Start High, toggle on 1 -> Low. 0 -> stays Low. 1 -> High. 1 -> Low. 0 -> Low -->
+                            <path d="M 50 80 L 100 80 L 100 80 L 150 80 L 150 30 L 200 30 L 200 80 L 250 80 L 250 80 L 300 80" fill="none" stroke="#a855f7" stroke-width="2"/>
+
+                            <!-- Manchester (1: High to Low, 0: Low to High) -->
+                            <text x="0" y="95" fill="#00c3ff" font-size="9">Mnchstr:</text>
+                            <path d="M 50 30 L 75 30 L 75 80 L 100 80 L 100 80 L 125 80 L 125 30 L 150 30 L 150 30 L 175 30 L 175 80 L 200 80 L 200 30 L 225 30 L 225 80 L 250 80 L 250 80 L 275 80 L 275 30 L 300 30" fill="none" stroke="#00c3ff" stroke-width="2"/>
+
+                        </svg>
+                    </div>
+                </div>
+            </details>
+
+
             <details class="kb-accordion red" style="border-color: rgba(255, 75, 75, 0.4);">
                 <summary class="kb-summary">
                     <span>Framing &amp; Byte Stuffing</span>
@@ -803,6 +863,61 @@
                             </defs>
                         </svg>
                     </div>
+                </div>
+            </details>
+
+            <details class="kb-accordion" style="border-color: rgba(0, 195, 255, 0.4);">
+                <summary class="kb-summary">
+                    <span>IP Subnetting Mathematics (Week 11/12)</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>Subnetting fundamentally cracks a single large IP network mechanically into smaller, isolated Broadcast Domains using Bitwise AND operations.</p>
+                    
+                    <div class="info-card accent-blue" style="margin-top: 15px; padding:20px; background: rgba(0, 195, 255, 0.05);">
+                        <h3 style="color:#00c3ff; border-bottom: 2px solid rgba(0,195,255,0.3); padding-bottom:5px; margin-bottom:15px;">📝 Worked Example: CIDR /27 Subnet Extraction</h3>
+                        <p>Given the block <code>200.200.200.160/27</code>, mathematically extract the Subnet Mask, the Network ID, the Broadcast Address, and the exactly Usable Host constraints.</p>
+                        
+                        <p style="margin-top: 15px; color: #b0bdc8;"><strong>1. The Subnet Mask (\/27):</strong><br>
+                        This means precisely 27 bits are rigidly locked as Network constraints, leaving exactly 5 bits for the Hosts (\(32 - 27 = 5\)).<br>
+                        Binary: <code>11111111 . 11111111 . 11111111 . 11100000</code><br>
+                        Decimal: <strong>255.255.255.224</strong></p>
+
+                        <p style="margin-top: 10px; color: #b0bdc8;"><strong>2. The Network ID (Base Address):</strong><br>
+                        Computed by forcing ALL 5 Host bits forcefully to <code>0</code>.<br>
+                        Result: <strong>200.200.200.160</strong></p>
+
+                        <p style="margin-top: 10px; color: #b0bdc8;"><strong>3. The Broadcast Address:</strong><br>
+                        Computed by forcing ALL 5 Host bits violently to <code>1</code> (i.e. adding 31).<br>
+                        Result: <strong>200.200.200.191</strong></p>
+
+                        <p style="margin-top: 10px; color: #b0bdc8;"><strong>4. Usable IPs:</strong><br>
+                        The absolute formula is \( 2^H - 2 \) (You must subtract the Base ID and Broadcast ID!).<br>
+                        \( 2^5 - 2 = 32 - 2 = \) <strong>30 usable IPs</strong> (from .161 to .190).</p>
+                    </div>
+                </div>
+            </details>
+
+            <details class="kb-accordion" style="border-color: rgba(168, 85, 247, 0.4);">
+                <summary class="kb-summary">
+                    <span>TCP Timeout & RTT Estimations (Week 13)</span>
+                    <span style="font-size: 0.8em; color: var(--text-secondary);">Take a closer look..</span>
+                </summary>
+                <div class="kb-details-content">
+                    <p>TCP cannot use a rigid, hardcoded Timeout clock because Internet latency aggressively fluctuates. TCP mathematically computes a dynamic timeout using Exponential Weighted Moving Averages (EWMA).</p>
+                    
+                    <ul class="kb-list" style="margin-top: 15px;">
+                        <li><strong>Estimated RTT (Smoothing):</strong><br> Smoothes out temporary spikes by retaining historical memory.<br>
+                        <div class="math-block" style="margin:5px 0;">\( \text{EstRTT} = (1-\alpha) \cdot \text{EstRTT}_{\text{old}} + \alpha \cdot \text{SampleRTT} \)</div>
+                        <p style="font-size: 0.85rem; color:#b0bdc8;">(Typically \( \alpha = 0.125 \))</p></li>
+                        
+                        <li style="margin-top: 15px;"><strong>Dev RTT (Variance):</strong><br> Computes the mathematical deviation (jitter) of the network.<br>
+                        <div class="math-block" style="margin:5px 0;">\( \text{DevRTT} = (1-\beta) \cdot \text{DevRTT}_{\text{old}} + \beta \cdot |\text{SampleRTT} - \text{EstRTT}| \)</div>
+                        <p style="font-size: 0.85rem; color:#b0bdc8;">(Typically \( \beta = 0.25 \))</p></li>
+                        
+                        <li style="margin-top: 15px; background: rgba(255, 75, 75, 0.1); padding: 10px; border-left: 3px solid #ff4b4b;"><strong>Final Timeout Interval:</strong><br> Safely computes the trigger clock by adding heavy safety margins (4x strictly for Deviation) to prevent premature retransmissions!<br>
+                        <div class="math-block" style="margin:5px 0; color:#ff4b4b;">\( \text{TimeoutInterval} = \text{EstRTT} + 4 \cdot \text{DevRTT} \)</div></li>
+                    </ul>
                 </div>
             </details>
         </section>
