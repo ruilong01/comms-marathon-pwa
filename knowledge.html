@@ -172,6 +172,40 @@
                         <li>You perform binary long division (XOR mathematics) of the shifted data by the generator.</li>
                         <li>The resulting <strong>Remainder</strong> is explicitly slapped onto the original data and transmitted. If the receiver inherently calculates a remainder of zero, the data is flawlessly intact.</li>
                     </ul>
+
+                    <div class="info-card accent-purple" style="margin-top: 20px; background: rgba(168, 85, 247, 0.05); padding: 20px;">
+                        <h3 style="color: #a855f7; border-bottom: 2px solid rgba(168, 85, 247, 0.3); padding-bottom: 5px; margin-bottom: 15px;">📝 Worked Example: CRC Binary XOR Division</h3>
+                        <p>Examiners love testing pure CRC calculation. Treat it identically to traditional long division, but utilize <strong>XOR (eXclusive OR)</strong> instead of subtraction! (Where 1 XOR 1 = 0, and 1 XOR 0 = 1).</p>
+                        
+                        <h4 style="margin-top: 15px;">Problem:</h4>
+                        <p>Given payload \( D = 101110 \) and Generator \( G = 1001 \) (Degree \( r=3 \)). Calculate the transmitted output.</p>
+                        
+                        <h4 style="margin-top: 15px;">Step 1: Append \( r \) zeroes to D</h4>
+                        <p>Shifted Payload \( D_{shifted} \) = \( 101110 \) <strong>000</strong></p>
+
+                        <h4 style="margin-top: 15px;">Step 2: XOR Long Division</h4>
+                        <!-- MathJax Array for Long Division -->
+                        <div class="math-block" style="font-size: 1.1rem; text-align: left; overflow-x: auto;">
+                            \[ \begin{array}{r|l}
+                            1001 & 101110000 \\
+                            \hline
+                            \oplus & 1001\downarrow\downarrow\downarrow \\
+                            \hline
+                            & 001010 \\
+                            \oplus & 001001 \\
+                            \hline
+                            & 00001100 \\
+                            \oplus & 00001001 \\
+                            \hline
+                            & 000001010 \\
+                            \oplus & 000001001 \\
+                            \hline
+                            & 000000011 \text{ (Remainder R)}
+                            \end{array} \]
+                        </div>
+                        
+                        <p style="margin-top: 15px;"><strong>Final Answer:</strong> Slap the exact 3-bit remainder onto the original payload! The transmitted frame is \( 101110 \)<strong>011</strong>.</p>
+                    </div>
                 </div>
             </details>
         </section>
@@ -422,6 +456,28 @@
                     <p style="margin-top:0.8rem;font-size:0.85rem">Collision probability for A (m<sub>A</sub>) and B (m<sub>B</sub>): <br>
                     P = 1/(2<sup>m<sub>B</sub></sup>)</p>
                 </div>
+            </div>
+
+            <!-- EXAMINER EXAMPLE: Physics Delay -->
+            <div class="info-card accent-blue" style="margin-top: 20px; background: rgba(75, 123, 255, 0.05); padding: 20px;">
+                <h3 style="color: #4b7bff; border-bottom: 2px solid rgba(75, 123, 255, 0.3); padding-bottom: 5px; margin-bottom: 15px;">📝 Worked Example: Delay Physics</h3>
+                <p>Networks do not transport data instantly. Understanding the difference between shoving bits onto the wire vs sending them across the globe is critical.</p>
+                
+                <h4 style="margin-top: 15px;">Problem:</h4>
+                <p>Calculate the total time to deliver a 1 MB file across a 100 Mbps link that stretches 5,000 km. (Assume velocity \( v = 2 \times 10^8 \) m/s).</p>
+                
+                <ul class="kb-list" style="margin-top: 15px; font-size: 1.05rem;">
+                    <li><strong>1. Transmission Delay (Pushing bits onto cable):</strong><br>
+                        \( T_{trans} = \frac{\text{Length (bits)}}{\text{Rate (bps)}} \)<br>
+                        \( T_{trans} = \frac{(1 \times 10^6 \times 8) \text{ bits}}{100 \times 10^6 \text{ bps}} = 0.08 \text{ seconds (80 ms)} \)
+                    </li>
+                    <li style="margin-top: 10px;"><strong>2. Propagation Delay (Traveling through copper):</strong><br>
+                        \( T_{prop} = \frac{\text{Distance (m)}}{\text{Velocity (m/s)}} \)<br>
+                        \( T_{prop} = \frac{5,000,000 \text{ m}}{2 \times 10^8 \text{ m/s}} = 0.025 \text{ seconds (25 ms)} \)
+                    </li>
+                </ul>
+                
+                <p style="margin-top: 15px;"><strong>Final Answer:</strong> \( T_{total} = T_{trans} + T_{prop} = 80\text{ms} + 25\text{ms} = \mathbf{105\text{ms}} \)</p>
             </div>
         </section>
 

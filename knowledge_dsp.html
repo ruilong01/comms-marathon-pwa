@@ -119,6 +119,67 @@
                     <li><strong>Time Scaling:</strong> x[-n] mathematically reverses the signal around the Y-axis. x[2n] compresses the signal, discarding every odd sample.</li>
                 </ul>
             </div>
+
+            <!-- EXAMINER EXAMPLE: Convolution -->
+            <div class="info-card accent-purple" style="margin-top: 20px; background: rgba(168, 85, 247, 0.05); padding: 20px;">
+                <h3 style="color: #a855f7; border-bottom: 2px solid rgba(168, 85, 247, 0.3); padding-bottom: 5px; margin-bottom: 15px;">📝 Worked Example: Linear Discrete Convolution</h3>
+                <p>Convolution mathematically describes how an input signal \( x[n] \) interacts with a system's impulse response \( h[n] \) to produce the output \( y[n] \).</p>
+                <div class="math-block" style="font-size: 1.2rem; margin: 15px 0;">
+                    \[ y[n] = x[n] * h[n] = \sum_{k=-\infty}^{\infty} x[k] h[n-k] \]
+                </div>
+                
+                <h4 style="margin-top: 15px;">Problem:</h4>
+                <p>Calculate the linear convolution of the input \( x[n] = [1, 2] \) and the impulse response \( h[n] = [3, -1] \). Assume the first sequence member is at \( n=0 \).</p>
+                
+                <h4 style="margin-top: 15px;">Solution (The Slide-and-Multiply Matrix):</h4>
+                <div class="math-block" style="font-size: 1.1rem; text-align: left; overflow-x: auto;">
+                    \[ \begin{array}{c|cc}
+                    & x[0]=1 & x[1]=2 \\
+                    \hline
+                    h[0]=3 & 3 & 6 \\
+                    h[1]=-1 & -1 & -2
+                    \end{array} \]
+                </div>
+                <p style="margin-top: 10px;">Summing the diagonals mathematically yields the final output array \( y[n] \):</p>
+                <ul class="kb-list" style="margin-top: 10px;">
+                    <li>\( y[0] = 3 \)</li>
+                    <li>\( y[1] = 6 + (-1) = 5 \)</li>
+                    <li>\( y[2] = -2 \)</li>
+                </ul>
+                <p><strong>Final Answer:</strong> \( y[n] = [ 3, 5, -2 ] \)</p>
+
+                <!-- Stem Plot SVG -->
+                <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; margin-top: 15px; text-align: center;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-primary);">Graphic: Output Stem Plot \( y[n] \)</h4>
+                    <svg viewBox="-50 -50 300 200" width="100%" height="auto" style="max-width: 300px;">
+                        <!-- Axes -->
+                        <line x1="-30" y1="100" x2="250" y2="100" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <line x1="0" y1="120" x2="0" y2="-20" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <text x="250" y="115" fill="rgba(255,255,255,0.5)" font-size="12">n</text>
+                        
+                        <!-- Axis Labels -->
+                        <text x="50" y="115" fill="gray" font-size="12" text-anchor="middle">1</text>
+                        <text x="100" y="115" fill="gray" font-size="12" text-anchor="middle">2</text>
+                        <text x="150" y="115" fill="gray" font-size="12" text-anchor="middle">3</text>
+                        <text x="-15" y="-10" fill="gray" font-size="12">Amplitude</text>
+
+                        <!-- y[0] = 3 -->
+                        <line x1="0" y1="100" x2="0" y2="40" stroke="#a855f7" stroke-width="3"/>
+                        <circle cx="0" cy="40" r="4" fill="#a855f7"/>
+                        <text x="-15" y="45" fill="#a855f7" font-size="12">3</text>
+
+                        <!-- y[1] = 5 -->
+                        <line x1="50" y1="100" x2="50" y2="0" stroke="#a855f7" stroke-width="3"/>
+                        <circle cx="50" cy="0" r="4" fill="#a855f7"/>
+                        <text x="55" y="5" fill="#a855f7" font-size="12">5</text>
+
+                        <!-- y[2] = -2 -->
+                        <line x1="100" y1="100" x2="100" y2="140" stroke="#ff3366" stroke-width="3"/>
+                        <circle cx="100" cy="140" r="4" fill="#ff3366"/>
+                        <text x="110" y="145" fill="#ff3366" font-size="12">-2</text>
+                    </svg>
+                </div>
+            </div>
         </section>
 
         <!-- ═══════════════════════════════════════ -->
@@ -202,6 +263,24 @@
                         <li><strong>Time Delay Theorem:</strong> Physically delaying a signal \( x[n-k] \) perfectly equates to multiplying the Z-domain representation by \( z^{-k} \).</li>
                         <li><strong>Convolution Theorem:</strong> Convolution in the time domain precisely equals strict multiplication in the Z-domain: \( y[n] = x[n] * h[n] \implies Y(z) = X(z)H(z) \).</li>
                     </ul>
+
+                    <div class="info-card accent-blue" style="margin-top: 20px; background: rgba(75, 123, 255, 0.05); padding: 20px;">
+                        <h3 style="color: #4b7bff; border-bottom: 2px solid rgba(75, 123, 255, 0.3); padding-bottom: 5px; margin-bottom: 15px;">📝 Worked Example: Deriving the Unit Step \( u[n] \)</h3>
+                        <p>Examiners frequently ask you to mathematically derive the Z-Transform of the standard unit step function, \( u[n] \) (where \( x[n] = 1 \) for all \( n \ge 0 \), and \( 0 \) otherwise).</p>
+                        
+                        <div class="math-block" style="font-size: 1.1rem; text-align: left; overflow-x: auto; margin-top: 15px;">
+                            \[ \begin{aligned} 
+                            X(z) &= \sum_{n=-\infty}^{\infty} u[n] z^{-n} \\
+                            X(z) &= \sum_{n=0}^{\infty} (1) z^{-n} \\
+                            X(z) &= \sum_{n=0}^{\infty} (z^{-1})^n 
+                            \end{aligned} \]
+                        </div>
+                        <p style="margin-top: 10px;">This is a perfect endless geometric series of the form \( \sum a r^n \). The infinite sum absolutely converges to \( \frac{1}{1-r} \) strictly if and only if \( |r| < 1 \).</p>
+                        <div class="math-block" style="font-size: 1.1rem; text-align: left; overflow-x: auto; margin-top: 15px;">
+                            \[ X(z) = \frac{1}{1 - z^{-1}}, \quad \text{ROC: } |z^{-1}| < 1 \implies |z| > 1 \]
+                        </div>
+                        <p><strong>Final Answer:</strong> \( \frac{z}{z - 1} \) with a region of convergence stretching outward infinitely from the pole at \( z = 1 \).</p>
+                    </div>
                 </div>
             </details>
 
@@ -218,6 +297,20 @@
                     <p>Assuming \( a_0 = 1 \), the current system output physically computes as:</p>
                     <div style="font-size: 1.2rem; margin: 15px 0;">
                         \[ y[n] = \sum_{m=0}^{M} b_m x[n-m] - \sum_{k=1}^{N} a_k y[n-k] \]
+                    </div>
+                    </div>
+
+                    <div class="info-card accent-red" style="margin-top: 20px; background: rgba(255, 75, 75, 0.05); padding: 20px;">
+                        <h3 style="color: #ff4b4b; border-bottom: 2px solid rgba(255, 75, 75, 0.3); padding-bottom: 5px; margin-bottom: 15px;">📝 Worked Example: IIR System Output</h3>
+                        <p>Given the difference equation \( y[n] = x[n] + 0.5 y[n-1] \), calculate the output \( y[n] \) for \( n = 0, 1, 2 \). Assume the system is perfectly relaxed (meaning \( y[-1] = 0 \)) and your input is an impulse \( x[n] = \delta[n] \).</p>
+                        
+                        <ul class="kb-list" style="margin-top: 15px; font-family: monospace; font-size: 1.1rem;">
+                            <li><strong>At n = 0:</strong><br> \( y[0] = x[0] + 0.5 y[-1] \)<br> \( y[0] = 1 + 0.5(0) \implies 1 \)</li>
+                            <li style="margin-top: 10px;"><strong>At n = 1:</strong><br> \( y[1] = x[1] + 0.5 y[0] \)<br> \( y[1] = 0 + 0.5(1) \implies 0.5 \)</li>
+                            <li style="margin-top: 10px;"><strong>At n = 2:</strong><br> \( y[2] = x[2] + 0.5 y[1] \)<br> \( y[2] = 0 + 0.5(0.5) \implies 0.25 \)</li>
+                        </ul>
+                        
+                        <p style="margin-top: 15px; color: #ff8080;"><strong>Examiner Observation:</strong> Even though the input signal explicitly died completely after \( n=0 \), the output continues endlessly calculating forever! This is mathematically why it is an <em>Infinite</em> Impulse Response.</p>
                     </div>
                 </div>
             </details>
