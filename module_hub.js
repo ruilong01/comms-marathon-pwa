@@ -147,11 +147,11 @@ function renderHub() {
             const card = document.createElement('div');
             card.className = 'item-card chapter-card';
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:start;">
-                    <h4>📚 ${chap.name}</h4>
-                    <button class="delete-btn" onclick="deleteChapter(event, '${chap.id}')">🗑️</button>
+                <div style="display:flex; justify-content:space-between; align-items:start; gap: 15px;">
+                    <h4 style="margin:0; overflow-wrap:anywhere; line-height:1.4;">📚 ${chap.name}</h4>
+                    <button class="delete-btn" onclick="deleteChapter(event, '${chap.id}')" title="Delete Chapter">🗑️</button>
                 </div>
-                <p style="margin-bottom:10px;">${chap.questions.length} Practice Questions</p>
+                <p style="margin-top:10px; margin-bottom:10px;">${chap.questions.length} Practice Questions</p>
                 <div style="display:flex; gap:10px;">
                     <a href="quiz.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none;">🎯 Quiz</a>
                     <a href="dynamic_knowledge.html?module=${encodeURIComponent(moduleName)}&chapter=${encodeURIComponent(chap.name)}" class="mock-btn" style="flex:1; text-align:center; text-decoration:none; border-color: rgba(168, 85, 247, 0.3); color: #a855f7;">📚 Know</a>
@@ -173,11 +173,11 @@ function renderHub() {
             card.className = 'item-card exam-card';
             card.style.borderColor = "rgba(168, 85, 247, 0.3)";
             card.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:start;">
-                    <h4>📝 ${ex.title || ex.name}</h4>
-                    <button class="delete-btn" onclick="deleteExam(event, '${ex.id}')">🗑️</button>
+                <div style="display:flex; justify-content:space-between; align-items:start; gap: 15px;">
+                    <h4 style="margin:0; overflow-wrap:anywhere; line-height:1.4;">📝 ${ex.title || ex.name}</h4>
+                    <button class="delete-btn" onclick="deleteExam(event, '${ex.id}')" title="Delete Exam">🗑️</button>
                 </div>
-                <p style="margin-bottom:10px;">AI Simulated Final Paper</p>
+                <p style="margin-top:10px; margin-bottom:10px;">AI Simulated Final Paper</p>
                 <a href="exam_paper.html?module=${encodeURIComponent(moduleName)}&exam=${encodeURIComponent(ex.name)}" class="mock-btn" style="text-align: center; text-decoration: none;">Attempt Mock Paper</a>
                 ${ex.analysis ? `<button class="mock-btn view-analysis-btn" data-exam="${encodeURIComponent(ex.name)}" style="background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color:#a855f7; margin-top:5px;">🧠 View Analysis</button>` : ''}
             `;

@@ -178,16 +178,20 @@
             background: rgba(255, 51, 102, 0.1);
             border: 1px solid rgba(255, 51, 102, 0.3);
             color: #ff3366;
-            padding: 0.3rem 0.6rem;
+            padding: 0.4rem;
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 1rem;
             cursor: pointer;
-            align-self: flex-end;
-            margin-top: 10px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
         }
         
         .delete-btn:hover {
             background: rgba(255, 51, 102, 0.3);
+            transform: scale(1.05);
         }
     </style>
 </head>
